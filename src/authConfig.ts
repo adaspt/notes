@@ -1,5 +1,7 @@
 import { Configuration, LogLevel } from '@azure/msal-browser';
 
+const MSAL_LOG_ENABLED = false;
+
 export const msalConfig: Configuration = {
   auth: {
     clientId: `${process.env['REACT_APP_AAD_APP_CLIENT_ID']}`, // This is the ONLY mandatory field that you need to supply.
@@ -15,7 +17,7 @@ export const msalConfig: Configuration = {
   system: {
     loggerOptions: {
       loggerCallback: (level, message, containsPii) => {
-        if (containsPii) {
+        if (!MSAL_LOG_ENABLED || containsPii) {
           return;
         }
 
@@ -45,7 +47,7 @@ export const msalConfig: Configuration = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-  scopes: ['https://graph.microsoft.com/Files.ReadWrite.AppFolder']
+  scopes: ['https://graph.microsoft.com/.default']
 };
 
 /**
@@ -53,12 +55,8 @@ export const loginRequest = {
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md
  */
 export const protectedResources = {
-  graphMe: {
+  graphDrive: {
     endpoint: 'https://graph.microsoft.com/v1.0/drive/special/approot',
-    scopes: ['Files.ReadWrite.AppFolder']
-  },
-  functionApi: {
-    endpoint: '/api/hello',
-    scopes: [`${process.env['REACT_APP_AAD_APP_FUNCTION_SCOPE_URI']}/access_as_user`] // e.g. api://xxxxxx/access_as_user
+    scopes: ['https://graph.microsoft.com/.default']
   }
 };
