@@ -45,7 +45,7 @@ export const msalConfig: Configuration = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-  scopes: []
+  scopes: ['https://graph.microsoft.com/Files.ReadWrite.AppFolder']
 };
 
 /**
@@ -54,8 +54,8 @@ export const loginRequest = {
  */
 export const protectedResources = {
   graphMe: {
-    endpoint: 'https://graph.microsoft.com/v1.0/me',
-    scopes: ['User.Read']
+    endpoint: 'https://graph.microsoft.com/v1.0/drive/special/approot',
+    scopes: ['Files.ReadWrite.AppFolder']
   },
   functionApi: {
     endpoint: '/api/hello',
