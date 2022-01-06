@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { useApiQuery } from './hooks/useApiQuery';
-import { getNotes } from './api/notes';
+import { getItems } from './api/notes';
 
 const CallApi: FC = () => {
-  const { data, refetch } = useApiQuery(getNotes());
+  const { data, refetch } = useApiQuery(getItems());
 
   return (
     <div>

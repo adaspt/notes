@@ -15,6 +15,7 @@ export const urlCombine = (...tokens: string[]) =>
   });
 
 export type QueryStringValueType = string | number | number[] | boolean | Date | null | undefined;
+export type QueryStringParams = Record<string, QueryStringValueType>;
 
 const queryStringReducer = (acc: string[][], { key, value }: { key: string; value: QueryStringValueType }) => {
   if (value !== undefined && value !== null) {
@@ -30,12 +31,12 @@ const queryStringReducer = (acc: string[][], { key, value }: { key: string; valu
   return acc;
 };
 
-export const buildQueryString = (params: Record<string, QueryStringValueType>) =>
+export const buildQueryString = (params: QueryStringParams) =>
   new URLSearchParams(
     Object.keys(params).reduce<string[][]>((acc, key) => queryStringReducer(acc, { key, value: params[key] }), [])
   );
 
-export const buildFullUrl = (tokens: string[], searchParams?: Record<string, QueryStringValueType>) => {
+export const buildFullUrl = (tokens: string[], searchParams?: QueryStringParams | null | undefined) => {
   const url = urlCombine(...tokens);
   if (!searchParams) {
     return url;

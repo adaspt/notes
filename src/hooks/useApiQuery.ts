@@ -1,23 +1,35 @@
 import { useMsal } from '@azure/msal-react';
 import { QueryKey, useQuery, UseQueryOptions } from 'react-query';
 import { protectedResources } from '../authConfig';
-import { buildFullUrl, QueryStringValueType } from '../utils/urls';
+import { buildFullUrl, QueryStringParams } from '../utils/urls';
 
 interface ApiQueryContext {
   signal?: AbortSignal;
   getAccessToken(scopes: string[]): Promise<string>;
 }
 
+type ApiQueryFactory<T> = (apiQueryContext: ApiQueryContext) => UseQueryOptions<T>;
+
 export const query =
-  <T>(queryKey: QueryKey, action: (apiContext: ApiQueryContext) => Promise<T>) =>
-  (apiQueryContext: ApiQueryContext): UseQueryOptions<T> => {
+  <T>(queryKey: QueryKey, action: (apiContext: ApiQueryContext) => Promise<T>): ApiQueryFactory<T> =>
+  (apiQueryContext) => {
     return {
       queryKey,
       queryFn: ({ signal }) => action({ ...apiQueryContext, signal })
     };
   };
 
-export const graphQuery = <T>(url: string, searchParams?: Record<string, QueryStringValueType>) => {
+export function graphQuery<T>(url: string, searchParams?: QueryStringParams | null | undefined): ApiQueryFactory<T>;
+export function graphQuery<D, T>(
+  url: string,
+  searchParams: QueryStringParams | null | undefined,
+  mapper: (dto: D) => T
+): ApiQueryFactory<T>;
+export function graphQuery<D, T>(
+  url: string,
+  searchParams: QueryStringParams | null | undefined,
+  mapper?: (dto: D) => T
+): ApiQueryFactory<T> {
   const queryKey = searchParams
     ? Object.keys(searchParams).reduce((acc, key) => `${acc}/${searchParams[key]}`, url)
     : url;
@@ -35,16 +47,22 @@ export const graphQuery = <T>(url: string, searchParams?: Record<string, QuerySt
       throw new Error(`Http error while executing request (${response.status})`);
     }
 
-    return response.json() as Promise<T>;
+    const result = await response.json();
+    return mapper ? mapper(result) : result;
   });
-};
+}
 
-export const useApiQuery = <T>(apiQueryFactory: (apiQueryContext: ApiQueryContext) => UseQueryOptions<T>) => {
+export const useApiQuery = <T>(apiQueryFactory: ApiQueryFactory<T>) => {
   const { instance: msal, accounts } = useMsal();
+
+  const getAccessToken = async (scopes: string[]) => {
+    const token = await msal.acquireTokenSilent({ scopes, account: accounts[0] });
+    return token.accessToken;
+  };
+
   return useQuery(
     apiQueryFactory({
-      getAccessToken: (scopes: string[]) =>
-        msal.acquireTokenSilent({ scopes, account: accounts[0] }).then((token) => token.accessToken)
+      getAccessToken
     })
   );
 };
