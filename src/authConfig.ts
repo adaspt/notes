@@ -55,8 +55,8 @@ export const loginRequest = {
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md
  */
 export const protectedResources = {
-  graphDrive: {
-    endpoint: 'https://graph.microsoft.com/v1.0/drive/special/approot',
+  graph: {
+    endpoint: 'https://graph.microsoft.com/v1.0',
     scopes: ['https://graph.microsoft.com/.default']
   }
 };
