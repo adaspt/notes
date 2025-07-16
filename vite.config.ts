@@ -16,6 +16,9 @@ export default defineConfig({
       cert: resolve(homedir(), '.rushstack/rushstack-serve.pem')
     }
   },
+  build: {
+    target: 'esnext',
+  },
   test: {
     globals: true,
     environment: 'jsdom'
