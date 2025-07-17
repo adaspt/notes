@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Crepe } from '@milkdown/crepe';
 import { Milkdown, MilkdownProvider, useEditor, useInstance } from '@milkdown/react';
-import { getMarkdown } from "@milkdown/utils";
+import { getMarkdown } from '@milkdown/utils';
+import { useState } from 'react';
 import type { DriveItem } from '@/model/driveItem';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/$')({
   loader: async ({ context, params }) => {
@@ -40,17 +42,29 @@ function Header() {
   const params = Route.useParams();
   const [_, getInstance] = useInstance();
 
-  const handleSave = async () => {
-    const editor = getInstance();
-    if (!editor) return;
+  const [error, setError] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-    const content = editor.action(getMarkdown());
-    await graph.api(`/me/drive/special/approot:/${params._splat}:/content`).put(content);
+  const handleSave = async () => {
+    setError(false);
+    setSaving(true);
+    try {
+      const editor = getInstance();
+      if (!editor) return;
+
+      const content = editor.action(getMarkdown());
+      await graph.api(`/me/drive/special/approot:/${params._splat}:/content`).put(content);
+    } catch (err) {
+      console.error('Error saving document:', err);
+      setError(true);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
-    <div className="p-4 flex justify-end items-center bg-gray-50 border-b">
-      <Button variant="default" onClick={handleSave}>
+    <div className={cn("p-4 flex justify-end items-center border-b", error ? "bg-red-100" : "bg-gray-50")}>
+      <Button variant="default" disabled={saving} onClick={handleSave}>
         Save
       </Button>
     </div>
