@@ -1,0 +1,6 @@
+{
+  "routes": [{ "route": "/.auth/login", "statusCode": 404 }],
+  "navigationFallback": {
+    "rewrite": "/index.html"
+  }
+}
