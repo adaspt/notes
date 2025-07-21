@@ -10,7 +10,7 @@ const MainSidebarGroup: FC = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link to="/$" params={{ _splat: '' }}>
+              <Link to="/">
                 <House />
                 <span>Home</span>
               </Link>
