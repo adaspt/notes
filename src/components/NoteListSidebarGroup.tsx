@@ -10,15 +10,17 @@ import {
   SidebarMenuItem
 } from './ui/sidebar';
 import type { FC } from 'react';
-import type { DriveItem } from '@/model/driveItem';
+import type { DriveItem } from '@microsoft/microsoft-graph-types';
 
-const isVisibleFolderOrNote = (item: DriveItem) =>
-  (item.folder && !item.name.startsWith('.')) || (item.file && item.name.endsWith('.md'));
+const isVisibleFolderOrNote = (item: DriveItem) => {
+  const name = item.name ?? '';
+  return (item.folder && !name.startsWith('.')) || (item.file && name.endsWith('.md'));
+};
 
 const compareByTypeAndName = (a: DriveItem, b: DriveItem) => {
   if (a.folder && !b.folder) return -1; // Folders first
   if (!a.folder && b.folder) return 1; // Files after folders
-  return a.name.localeCompare(b.name); // Sort by name
+  return (a.name ?? '').localeCompare(b.name ?? ''); // Sort by name
 };
 
 const NoteListSidebarGroup: FC = () => {

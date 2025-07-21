@@ -3,7 +3,7 @@ import { Crepe } from '@milkdown/crepe';
 import { Milkdown, MilkdownProvider, useEditor, useInstance } from '@milkdown/react';
 import { getMarkdown } from '@milkdown/utils';
 import { useState } from 'react';
-import type { DriveItem } from '@/model/driveItem';
+import type { DriveItem } from '@microsoft/microsoft-graph-types';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 

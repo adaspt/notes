@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "vite --port 3000",
     "start": "vite --port 3000",
-    "build": "vite build",
-    "build-original": "vite build && tsc",
+    "build": "vite build && tsc --noEmit",
     "serve": "vite preview",
     "test": "vitest run",
     "lint": "eslint",
@@ -38,6 +37,7 @@
   },
   "devDependencies": {
     "@microsoft/microsoft-graph-client": "^3.0.7",
+    "@microsoft/microsoft-graph-types": "^2.40.0",
     "@tanstack/eslint-config": "^0.1.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",

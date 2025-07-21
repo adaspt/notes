@@ -7,7 +7,6 @@ import tailwindcss from '@tailwindcss/vite';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 
 // https://vitejs.dev/config/
-/** @type {import('vite').UserConfig} */
 export default defineConfig({
   plugins: [TanStackRouterVite({ autoCodeSplitting: true }), viteReact(), tailwindcss()],
   server: {
