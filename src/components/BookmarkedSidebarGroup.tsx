@@ -13,15 +13,15 @@ import type { FC } from 'react';
 const list = [
   {
     name: 'Personal :: Projects :: Notes',
-    path: '/Personal/Projects/notes.md'
+    id: '24ED83B92E9CD012!s1da45965b1da470d87934851500ec366'
   },
   {
     name: 'Work :: BDO :: Sprint',
-    path: '/Work/BDO/Sprint.md'
+    id: '24ED83B92E9CD012!81785'
   },
   {
     name: 'Work :: Reiz :: SkillIT',
-    path: '/Work/Reiz/skillit.md'
+    id: '24ED83B92E9CD012!s0b73b3ebf7504ac78a72e63afb094c60'
   }
 ];
 
@@ -32,9 +32,9 @@ const BookmarkedSidebarGroup: FC = () => {
       <SidebarGroupContent>
         <SidebarMenu>
           {list.map((x) => (
-            <SidebarMenuItem key={x.path}>
+            <SidebarMenuItem key={x.id}>
               <SidebarMenuButton asChild>
-                <Link to="/$" params={{ _splat: x.path }}>
+                <Link to="/$id" params={{ id: x.id }}>
                   <Bookmark />
                   <span>{x.name}</span>
                 </Link>

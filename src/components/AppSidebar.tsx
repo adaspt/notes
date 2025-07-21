@@ -1,7 +1,7 @@
 import { Sidebar, SidebarContent } from './ui/sidebar';
-import NoteListSidebarGroup from './NoteListSidebarGroup';
 import MainSidebarGroup from './MainSidebarGroup';
 import BookmarkedSidebarGroup from './BookmarkedSidebarGroup';
+import NoteTreeSidebarGroup from './NoteTreeSidebarGroup';
 import type { FC } from 'react';
 
 const AppSidebar: FC = () => {
@@ -10,7 +10,7 @@ const AppSidebar: FC = () => {
       <SidebarContent>
         <MainSidebarGroup />
         <BookmarkedSidebarGroup />
-        <NoteListSidebarGroup />
+        <NoteTreeSidebarGroup />
       </SidebarContent>
     </Sidebar>
   );
