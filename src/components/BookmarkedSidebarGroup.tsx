@@ -18,6 +18,10 @@ const list = [
   {
     name: 'Work :: BDO :: Sprint',
     path: '/Work/BDO/Sprint.md'
+  },
+  {
+    name: 'Work :: Reiz :: SkillIT',
+    path: '/Work/Reiz/skillit.md'
   }
 ];
 
@@ -28,7 +32,7 @@ const BookmarkedSidebarGroup: FC = () => {
       <SidebarGroupContent>
         <SidebarMenu>
           {list.map((x) => (
-            <SidebarMenuItem>
+            <SidebarMenuItem key={x.path}>
               <SidebarMenuButton asChild>
                 <Link to="/$" params={{ _splat: x.path }}>
                   <Bookmark />
