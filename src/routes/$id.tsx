@@ -5,6 +5,7 @@ import { getMarkdown } from '@milkdown/utils';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 export const Route = createFileRoute('/$id')({
   loader: async ({ context, params }) => {
@@ -54,7 +55,8 @@ function Header() {
   };
 
   return (
-    <div className={cn("p-4 flex justify-end items-center border-b", error ? "bg-red-100" : "bg-gray-50")}>
+    <div className={cn("h-12 px-2 flex justify-between items-center border-b", error ? "bg-red-100" : "bg-gray-50")}>
+      <SidebarTrigger />
       <Button variant="default" disabled={saving} onClick={handleSave}>
         Save
       </Button>
