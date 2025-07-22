@@ -3,12 +3,15 @@ import { Crepe } from '@milkdown/crepe';
 import { Fragment, useState } from 'react';
 import { getMarkdown } from '@milkdown/utils';
 import { useRouteContext, useRouter } from '@tanstack/react-router';
+import { Bookmark } from 'lucide-react';
+import { useStore } from '@tanstack/react-store';
 import { SidebarTrigger } from './ui/sidebar';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from './ui/breadcrumb';
 import type { FC } from 'react';
 import { cn } from '@/lib/utils';
+import { addBookmark, bookmarkStore, removeBookmark } from '@/stores/bookmarkStore';
 
 interface Props {
   id: string;
@@ -19,6 +22,7 @@ interface Props {
 const NoteEditorContent: FC<Props> = ({ id, path, defaultValue }) => {
   const router = useRouter();
   const { graph } = useRouteContext({ from: '__root__' });
+  const isBookmarked = useStore(bookmarkStore, (bookmarks) => bookmarks.some((b) => b.id === id));
 
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState(false);
@@ -31,6 +35,14 @@ const NoteEditorContent: FC<Props> = ({ id, path, defaultValue }) => {
       })
     )
   );
+
+  const handleToggleBookmark = () => {
+    if (isBookmarked) {
+      removeBookmark(id);
+    } else {
+      addBookmark({ id, title: path });
+    }
+  };
 
   const handleSave = async () => {
     setError(false);
@@ -64,14 +76,17 @@ const NoteEditorContent: FC<Props> = ({ id, path, defaultValue }) => {
                 .filter(Boolean)
                 .map((segment, index) => (
                   <Fragment key={index}>
-                    {index > 0 && <BreadcrumbSeparator key={index}>/</BreadcrumbSeparator>}
-                    <BreadcrumbItem key={index}>{segment}</BreadcrumbItem>
+                    {index > 0 && <BreadcrumbSeparator>/</BreadcrumbSeparator>}
+                    <BreadcrumbItem>{segment}</BreadcrumbItem>
                   </Fragment>
                 ))}
             </BreadcrumbList>
           </Breadcrumb>
+          <Button variant="ghost" onClick={handleToggleBookmark}>
+            <Bookmark fill={isBookmarked ? '#81a1c1' : undefined} />
+          </Button>
         </div>
-        <Button variant={dirty ? "destructive" : "default"} disabled={saving} onClick={handleSave}>
+        <Button variant={dirty ? 'destructive' : 'default'} disabled={saving} onClick={handleSave}>
           Save
         </Button>
       </div>

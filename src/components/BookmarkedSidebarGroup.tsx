@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { Bookmark } from 'lucide-react';
+import { useStore } from '@tanstack/react-store';
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -9,34 +10,25 @@ import {
   SidebarMenuItem
 } from './ui/sidebar';
 import type { FC } from 'react';
-
-const list = [
-  {
-    name: 'Personal / Projects / notes.md',
-    id: '24ED83B92E9CD012!s1da45965b1da470d87934851500ec366'
-  },
-  {
-    name: 'Work / BDO / Sprint.md',
-    id: '24ED83B92E9CD012!81785'
-  },
-  {
-    name: 'Work / Reiz / SkillIT.md',
-    id: '24ED83B92E9CD012!s0b73b3ebf7504ac78a72e63afb094c60'
-  }
-];
+import { bookmarkStore } from '@/stores/bookmarkStore';
 
 const BookmarkedSidebarGroup: FC = () => {
+  const bookmarks = useStore(bookmarkStore);
+  if (bookmarks.length === 0) {
+    return null;
+  }
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Bookmarks</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          {list.map((x) => (
+          {bookmarks.map((x) => (
             <SidebarMenuItem key={x.id}>
               <SidebarMenuButton asChild>
                 <Link to="/$id" params={{ id: x.id }} activeProps={{ className: 'font-medium' }}>
                   <Bookmark />
-                  <span>{x.name}</span>
+                  <span>{x.title}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
