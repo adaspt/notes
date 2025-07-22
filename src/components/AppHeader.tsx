@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Notebook } from 'lucide-react';
 import { SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
+import { Button } from './ui/button';
 import type { FC } from 'react';
 
 const AppHeader: FC = () => {
@@ -19,6 +20,9 @@ const AppHeader: FC = () => {
               </div>
             </Link>
           </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <Button className="w-full" disabled>Create</Button>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarHeader>
