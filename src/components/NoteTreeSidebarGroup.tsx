@@ -8,9 +8,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub
+  SidebarMenuSub,
+  SidebarMenuSubItem
 } from './ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import { Skeleton } from './ui/skeleton';
 import type { FC } from 'react';
 import type { DriveItem } from '@microsoft/microsoft-graph-types';
 import type { Tree, TreeNode } from '@/model/tree';
@@ -28,10 +30,10 @@ const NoteTree: FC<{ tree: Tree; node: TreeNode; onOpen: (id: string) => void }>
     );
   }
 
-  const childNodes = tree[node.id] || [];
+  const childNodes = tree[node.id];
 
   const handleOpenChange = (open: boolean) => {
-    if (open && childNodes.length === 0) {
+    if (open && !childNodes) {
       onOpen(node.id);
     }
   };
@@ -51,7 +53,12 @@ const NoteTree: FC<{ tree: Tree; node: TreeNode; onOpen: (id: string) => void }>
         </CollapsibleTrigger>
         <CollapsibleContent>
           <SidebarMenuSub>
-            {childNodes.map((childNode) => (
+            {!childNodes && new Array(node.childCount).fill(0).map((_, index) => (
+              <SidebarMenuSubItem key={index}>
+                <Skeleton className="h-8 w-full" />
+              </SidebarMenuSubItem>
+            ))}
+            {childNodes?.map((childNode) => (
               <NoteTree key={childNode.id} tree={tree} node={childNode} onOpen={onOpen} />
             ))}
           </SidebarMenuSub>

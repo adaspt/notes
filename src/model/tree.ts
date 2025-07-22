@@ -7,6 +7,7 @@ export interface TreeNode {
   readonly parentId: string | null;
   readonly name: string;
   readonly type: 'folder' | 'file';
+  readonly childCount: number;
 }
 
 export type Tree = { [key: string]: ReadonlyArray<TreeNode> | undefined };
@@ -26,5 +27,6 @@ export const driveItemToTreeNode = (item: DriveItem): TreeNode => ({
   id: item.id ?? '',
   parentId: item.parentReference?.id ?? null,
   name: item.name ?? '',
-  type: item.folder ? 'folder' : 'file'
+  type: item.folder ? 'folder' : 'file',
+  childCount: item.folder?.childCount ?? 0
 });
