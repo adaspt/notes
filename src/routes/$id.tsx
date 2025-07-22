@@ -1,11 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Crepe } from '@milkdown/crepe';
-import { Milkdown, MilkdownProvider, useEditor, useInstance } from '@milkdown/react';
-import { getMarkdown } from '@milkdown/utils';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import NoteEditor from '@/components/NoteEditor';
 
 export const Route = createFileRoute('/$id')({
   loader: async ({ context, params }) => {
@@ -22,50 +16,6 @@ function RouteComponent() {
   const { content } = Route.useLoaderData();
 
   return (
-    <MilkdownProvider>
-      <Header />
-      <Editor key={params.id} defaultValue={content} />
-    </MilkdownProvider>
+    <NoteEditor key={params.id} id={params.id} content={content} />
   );
-}
-
-function Header() {
-  const { graph } = Route.useRouteContext();
-  const params = Route.useParams();
-  const [_, getInstance] = useInstance();
-
-  const [error, setError] = useState(false);
-  const [saving, setSaving] = useState(false);
-
-  const handleSave = async () => {
-    setError(false);
-    setSaving(true);
-    try {
-      const editor = getInstance();
-      if (!editor) return;
-
-      const content = editor.action(getMarkdown());
-      await graph.api(`/me/drive/items/${params.id}/content`).put(content);
-    } catch (err) {
-      console.error('Error saving document:', err);
-      setError(true);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div className={cn("h-12 px-2 flex justify-between items-center border-b", error ? "bg-red-100" : "bg-gray-50")}>
-      <SidebarTrigger />
-      <Button variant="default" disabled={saving} onClick={handleSave}>
-        Save
-      </Button>
-    </div>
-  );
-}
-
-function Editor({ defaultValue }: { defaultValue: string }) {
-  useEditor((root) => new Crepe({ root, defaultValue })).get();
-
-  return <Milkdown />;
 }
