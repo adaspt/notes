@@ -5,23 +5,31 @@ import { getMarkdown } from '@milkdown/utils';
 import { useRouteContext, useRouter } from '@tanstack/react-router';
 import { SidebarTrigger } from './ui/sidebar';
 import { Button } from './ui/button';
+import { Separator } from './ui/separator';
 import type { FC } from 'react';
 import { cn } from '@/lib/utils';
 
 interface Props {
   id: string;
-  content: string;
+  path: string;
+  defaultValue: string;
 }
 
-const NoteEditorContent: FC<Props> = ({ id, content }) => {
+const NoteEditorContent: FC<Props> = ({ id, path, defaultValue }) => {
   const router = useRouter();
   const { graph } = useRouteContext({ from: '__root__' });
-  const { get } = useEditor((root) => {
-    return new Crepe({ root, defaultValue: content });
-  });
 
+  const [dirty, setDirty] = useState(false);
   const [error, setError] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const { get } = useEditor((root) =>
+    new Crepe({ root, defaultValue }).on((ctx) =>
+      ctx.markdownUpdated((_, value) => {
+        setDirty(value !== defaultValue);
+      })
+    )
+  );
 
   const handleSave = async () => {
     setError(false);
@@ -33,6 +41,7 @@ const NoteEditorContent: FC<Props> = ({ id, content }) => {
       const value = editor.action(getMarkdown());
       await graph.api(`/me/drive/items/${id}/content`).put(value);
       await router.invalidate({ sync: true });
+      setDirty(false);
     } catch (err) {
       console.error('Error saving document:', err);
       setError(true);
@@ -44,7 +53,12 @@ const NoteEditorContent: FC<Props> = ({ id, content }) => {
   return (
     <>
       <div className={cn('h-12 px-2 flex justify-between items-center border-b', error ? 'bg-red-100' : 'bg-gray-50')}>
-        <SidebarTrigger />
+        <div className="h-12 py-3 flex items-center gap-2">
+          <SidebarTrigger />
+          <Separator orientation="vertical" />
+          {path}
+          {dirty && <span className="font-medium">*</span>}
+        </div>
         <Button variant="default" disabled={saving} onClick={handleSave}>
           Save
         </Button>
@@ -54,10 +68,10 @@ const NoteEditorContent: FC<Props> = ({ id, content }) => {
   );
 };
 
-const NoteEditor: FC<Props> = ({ id, content }) => {
+const NoteEditor: FC<Props> = ({ id, path, defaultValue }) => {
   return (
     <MilkdownProvider>
-      <NoteEditorContent id={id} content={content} />
+      <NoteEditorContent id={id} path={path} defaultValue={defaultValue} />
     </MilkdownProvider>
   );
 };
