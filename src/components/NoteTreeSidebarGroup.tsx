@@ -22,7 +22,7 @@ const NoteTree: FC<{ tree: Tree; node: TreeNode; onOpen: (id: string) => void }>
   if (node.type === 'file') {
     return (
       <SidebarMenuButton asChild>
-        <Link to="/$id" params={{ id: node.id }}>
+        <Link to="/$id" params={{ id: node.id }} activeProps={{ className: 'font-medium' }}>
           <File />
           <span>{node.name}</span>
         </Link>
