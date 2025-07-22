@@ -1,11 +1,12 @@
 import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react';
 import { Crepe } from '@milkdown/crepe';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { getMarkdown } from '@milkdown/utils';
 import { useRouteContext, useRouter } from '@tanstack/react-router';
 import { SidebarTrigger } from './ui/sidebar';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from './ui/breadcrumb';
 import type { FC } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -56,10 +57,21 @@ const NoteEditorContent: FC<Props> = ({ id, path, defaultValue }) => {
         <div className="h-12 py-3 flex items-center gap-2">
           <SidebarTrigger />
           <Separator orientation="vertical" />
-          {path}
-          {dirty && <span className="font-medium">*</span>}
+          <Breadcrumb>
+            <BreadcrumbList>
+              {path
+                .split('/')
+                .filter(Boolean)
+                .map((segment, index) => (
+                  <Fragment key={index}>
+                    {index > 0 && <BreadcrumbSeparator key={index}>/</BreadcrumbSeparator>}
+                    <BreadcrumbItem key={index}>{segment}</BreadcrumbItem>
+                  </Fragment>
+                ))}
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
-        <Button variant="default" disabled={saving} onClick={handleSave}>
+        <Button variant={dirty ? "destructive" : "default"} disabled={saving} onClick={handleSave}>
           Save
         </Button>
       </div>
