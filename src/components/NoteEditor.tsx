@@ -83,7 +83,7 @@ const NoteEditorContent: FC<Props> = ({ id, path, defaultValue }) => {
             </BreadcrumbList>
           </Breadcrumb>
           <Button variant="ghost" onClick={handleToggleBookmark}>
-            <Bookmark fill={isBookmarked ? '#81a1c1' : undefined} />
+            <Bookmark fill={isBookmarked ? '#81a1c1' : 'transparent'} />
           </Button>
         </div>
         <Button variant={dirty ? 'destructive' : 'default'} disabled={saving} onClick={handleSave}>
