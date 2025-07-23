@@ -1,16 +1,17 @@
 import { Link } from '@tanstack/react-router';
-import { Bookmark } from 'lucide-react';
+import { Bookmark, Trash2 } from 'lucide-react';
 import { useStore } from '@tanstack/react-store';
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem
 } from './ui/sidebar';
 import type { FC } from 'react';
-import { bookmarkStore } from '@/stores/bookmarkStore';
+import { bookmarkStore, removeBookmark } from '@/stores/bookmarkStore';
 
 const BookmarkedSidebarGroup: FC = () => {
   const bookmarks = useStore(bookmarkStore);
@@ -31,6 +32,9 @@ const BookmarkedSidebarGroup: FC = () => {
                   <span>{x.title}</span>
                 </Link>
               </SidebarMenuButton>
+              <SidebarMenuAction showOnHover onClick={() => removeBookmark(x.id)}>
+                <Trash2 />
+              </SidebarMenuAction>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
