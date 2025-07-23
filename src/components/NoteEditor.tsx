@@ -12,6 +12,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from 
 import type { FC } from 'react';
 import { cn } from '@/lib/utils';
 import { addBookmark, bookmarkStore, removeBookmark } from '@/stores/bookmarkStore';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Props {
   id: string;
@@ -19,10 +20,14 @@ interface Props {
   defaultValue: string;
 }
 
+const mobilePath = (isMobile: boolean) => (_: string, index: number, segments: Array<string>) =>
+  !isMobile || index === segments.length - 1;
+
 const NoteEditorContent: FC<Props> = ({ id, path, defaultValue }) => {
   const router = useRouter();
   const { graph } = useRouteContext({ from: '__root__' });
   const isBookmarked = useStore(bookmarkStore, (bookmarks) => bookmarks.some((b) => b.id === id));
+  const isMobile = useIsMobile();
 
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState(false);
@@ -73,7 +78,7 @@ const NoteEditorContent: FC<Props> = ({ id, path, defaultValue }) => {
             <BreadcrumbList>
               {path
                 .split('/')
-                .filter(Boolean)
+                .filter(mobilePath(isMobile))
                 .map((segment, index) => (
                   <Fragment key={index}>
                     {index > 0 && <BreadcrumbSeparator>/</BreadcrumbSeparator>}

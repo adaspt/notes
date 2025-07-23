@@ -10,7 +10,7 @@ export const Route = createFileRoute('/$id')({
     const response = await context.graph.api(`/me/drive/items/${params.id}/content`).get();
     const content = await new Response(response).text();
 
-    const path = `${item.parentReference?.path?.substring(APP_ROOT.length)}/${item.name}`;
+    const path = `${item.parentReference?.path?.substring(APP_ROOT.length + 1)}/${item.name}`;
 
     return { path, content };
   },
