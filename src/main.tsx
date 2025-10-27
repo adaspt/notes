@@ -1,17 +1,18 @@
 import { StrictMode } from 'react';
-import ReactDOM from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { InteractionType, createStandardPublicClientApplication } from '@azure/msal-browser';
+import { createRoot } from 'react-dom/client';
+import { createStandardPublicClientApplication, InteractionType, type RedirectRequest } from '@azure/msal-browser';
 import { MsalAuthenticationTemplate, MsalProvider } from '@azure/msal-react';
 import { Client } from '@microsoft/microsoft-graph-client';
+import { BrowserRouter } from 'react-router';
+import { GraphProvider } from './providers/graph.ts';
+import { createDb, DbProvider } from './providers/db.ts';
+import { GraphTasksService } from './providers/graphTasks.ts';
+import { SyncProvider, SyncService } from './providers/sync.ts';
+import { SyncTasksService } from './providers/syncTasks.ts';
+import { TasksRepository } from './providers/tasksRepository.ts';
+import './index.css';
+import App from './App.tsx';
 
-// Import the generated route tree
-import { routeTree } from './routeTree.gen';
-
-import './styles.css';
-import reportWebVitals from './reportWebVitals.ts';
-
-// Authentication
 const msal = await createStandardPublicClientApplication({
   auth: {
     clientId: 'c0852a00-aa81-4963-a61d-a8a314dae18b',
@@ -20,55 +21,54 @@ const msal = await createStandardPublicClientApplication({
   }
 });
 
-// Graph API
+if (!msal.getActiveAccount()) {
+  const accounts = msal.getAllAccounts();
+  if (accounts.length > 0) {
+    msal.setActiveAccount(accounts[0]);
+  }
+}
+
+const authenticationRequest: RedirectRequest = {
+  scopes: ['https://graph.microsoft.com/.default']
+};
+
 const graph = Client.init({
-  authProvider: (callback) => {
+  authProvider: (done) => {
     msal
       .acquireTokenSilent({
-        account: msal.getAllAccounts()[0],
-        scopes: ['https://graph.microsoft.com/.default']
+        account: msal.getActiveAccount() || undefined,
+        scopes: authenticationRequest.scopes
       })
       .then(
-        (response) => callback(null, response.accessToken),
-        (error) => callback(error, null)
+        (response) => done(null, response.accessToken),
+        (error) => done(error, null)
       );
   }
 });
 
-// Create a new router instance
-const router = createRouter({
-  routeTree,
-  context: { graph },
-  defaultPreload: false,
-  scrollRestoration: true,
-  defaultStructuralSharing: true,
-  defaultPreloadStaleTime: 0,
-  defaultStaleTime: 3600000 // 1 hour
-});
+const db = createDb();
+const tasksRepository = new TasksRepository(db);
+const graphTasksService = new GraphTasksService(graph);
+const syncTasksService = new SyncTasksService(tasksRepository, graphTasksService);
+const syncService = new SyncService(syncTasksService);
 
-// Register the router instance for type safety
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router;
-  }
-}
-
-// Render the app
-const rootElement = document.getElementById('app');
-if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <StrictMode>
-      <MsalProvider instance={msal}>
-        <MsalAuthenticationTemplate interactionType={InteractionType.Redirect}>
-          <RouterProvider router={router} />
-        </MsalAuthenticationTemplate>
-      </MsalProvider>
-    </StrictMode>
-  );
-}
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <MsalProvider instance={msal}>
+      <MsalAuthenticationTemplate
+        interactionType={InteractionType.Redirect}
+        authenticationRequest={authenticationRequest}
+      >
+        <DbProvider db={db}>
+          <GraphProvider client={graph}>
+            <SyncProvider syncService={syncService}>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </SyncProvider>
+          </GraphProvider>
+        </DbProvider>
+      </MsalAuthenticationTemplate>
+    </MsalProvider>
+  </StrictMode>
+);

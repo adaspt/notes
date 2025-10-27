@@ -1,30 +1,18 @@
-import { resolve } from 'node:path';
-import { homedir } from 'node:os';
-import { defineConfig } from 'vite';
-import viteReact from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import { resolve } from "node:path";
+import { homedir } from "node:os";
 
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
-
-// https://vitejs.dev/config/
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [TanStackRouterVite({ autoCodeSplitting: true }), viteReact(), tailwindcss()],
+  plugins: [react(), tailwindcss()],
   server: {
+    port: 3000,
+    strictPort: true,
     https: {
-      key: resolve(homedir(), '.rushstack/rushstack-serve.key'),
-      cert: resolve(homedir(), '.rushstack/rushstack-serve.pem')
-    }
+      key: resolve(homedir(), ".rushstack/rushstack-serve.key"),
+      cert: resolve(homedir(), ".rushstack/rushstack-serve.pem"),
+    },
   },
-  build: {
-    target: 'esnext',
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom'
-  },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src')
-    }
-  }
 });
