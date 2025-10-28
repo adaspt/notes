@@ -3,7 +3,6 @@ export type TaskImportance = 'low' | 'normal' | 'high';
 export type TaskStatus = 'notStarted' | 'inProgress' | 'completed' | 'waitingOnOthers' | 'deferred';
 
 export interface TaskCheckListItem {
-  graphId: string;
   displayName: string;
   isChecked: boolean;
 }

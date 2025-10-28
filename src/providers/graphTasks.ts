@@ -47,15 +47,15 @@ export class GraphTasksService {
     saveDeltaLink(deltaLink);
   }
 
-  async createTask(task: TodoTask) {
-    return (await this.#graph.api(`/me/todo/lists/${DEFAULT_LIST_ID}/tasks`).post(task)) as TodoTask;
+  createTask(task: TodoTask): Promise<TodoTask> {
+    return this.#graph.api(`/me/todo/lists/${DEFAULT_LIST_ID}/tasks`).post(task);
   }
 
-  async updateTask(task: TodoTask) {
-    await this.#graph.api(`/me/todo/lists/${DEFAULT_LIST_ID}/tasks/${task.id}`).update(task);
+  updateTask(task: TodoTask): Promise<TodoTask> {
+    return this.#graph.api(`/me/todo/lists/${DEFAULT_LIST_ID}/tasks/${task.id}`).update(task);
   }
 
-  async deleteTask(taskId: string) {
-    await this.#graph.api(`/me/todo/lists/${DEFAULT_LIST_ID}/tasks/${taskId}`).delete();
+  deleteTask(taskId: string): Promise<void> {
+    return this.#graph.api(`/me/todo/lists/${DEFAULT_LIST_ID}/tasks/${taskId}`).delete();
   }
 }
