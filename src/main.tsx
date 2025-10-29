@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createStandardPublicClientApplication, InteractionType, type RedirectRequest } from '@azure/msal-browser';
 import { MsalAuthenticationTemplate, MsalProvider } from '@azure/msal-react';
@@ -9,7 +9,7 @@ import { createDb, DbProvider } from './providers/db.ts';
 import { GraphTasksService } from './providers/graphTasks.ts';
 import { SyncProvider, SyncService } from './providers/sync.ts';
 import { SyncTasksService } from './providers/syncTasks.ts';
-import { TasksRepository } from './providers/tasksRepository.ts';
+import { TasksRepository, TasksRepositoryProvider } from './providers/tasksRepository.ts';
 import './index.css';
 import App from './App.tsx';
 
@@ -20,13 +20,6 @@ const msal = await createStandardPublicClientApplication({
     redirectUri: window.location.origin
   }
 });
-
-if (!msal.getActiveAccount()) {
-  const accounts = msal.getAllAccounts();
-  if (accounts.length > 0) {
-    msal.setActiveAccount(accounts[0]);
-  }
-}
 
 const authenticationRequest: RedirectRequest = {
   scopes: ['https://graph.microsoft.com/.default']
@@ -52,6 +45,17 @@ const graphTasksService = new GraphTasksService(graph);
 const syncTasksService = new SyncTasksService(tasksRepository, graphTasksService);
 const syncService = new SyncService(syncTasksService);
 
+function MsalAccount({ children }: { children: ReactNode }) {
+  if (!msal.getActiveAccount()) {
+    const accounts = msal.getAllAccounts();
+    if (accounts.length > 0) {
+      msal.setActiveAccount(accounts[0]);
+    }
+  }
+
+  return children;
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <MsalProvider instance={msal}>
@@ -59,15 +63,19 @@ createRoot(document.getElementById('root')!).render(
         interactionType={InteractionType.Redirect}
         authenticationRequest={authenticationRequest}
       >
-        <DbProvider db={db}>
-          <GraphProvider client={graph}>
-            <SyncProvider syncService={syncService}>
-              <BrowserRouter>
-                <App />
-              </BrowserRouter>
-            </SyncProvider>
-          </GraphProvider>
-        </DbProvider>
+        <MsalAccount>
+          <DbProvider db={db}>
+            <TasksRepositoryProvider value={tasksRepository}>
+              <GraphProvider client={graph}>
+                <SyncProvider syncService={syncService}>
+                  <BrowserRouter>
+                    <App />
+                  </BrowserRouter>
+                </SyncProvider>
+              </GraphProvider>
+            </TasksRepositoryProvider>
+          </DbProvider>
+        </MsalAccount>
       </MsalAuthenticationTemplate>
     </MsalProvider>
   </StrictMode>
