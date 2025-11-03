@@ -1,15 +1,19 @@
 import { createContext, createElement, useEffect, type ReactNode } from 'react';
 import type { SyncTasksService } from './syncTasks';
+import type { SyncNotesService } from './syncNotes';
 
 export class SyncService {
-  constructor(syncTasksService: SyncTasksService) {
+  constructor(syncTasksService: SyncTasksService, syncNotesService: SyncNotesService) {
     this.#syncTasksService = syncTasksService;
+    this.#syncNotesService = syncNotesService;
   }
 
   #syncTasksService: SyncTasksService;
+  #syncNotesService: SyncNotesService;
 
   async sync() {
     await this.#syncTasksService.sync();
+    await this.#syncNotesService.sync();
   }
 }
 

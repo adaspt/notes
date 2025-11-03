@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router';
 import AppLayout from './components/shell/AppLayout';
 import TodayTasksPage from './pages/tasks/TodayTasksPage';
 import TaskDetailsPage from './pages/tasks/TaskDetailsPage';
+import NotesPage from './pages/notes/NotesPage';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="later" element={<div>Later's Tasks</div>} />
           <Route path="someday" element={<div>Someday's Tasks</div>} />
         </Route>
+        <Route path="notes" element={<NotesPage />} />
         <Route path="*" element={<div>Not Found</div>} />
       </Route>
     </Routes>

@@ -6,12 +6,15 @@ import { Client } from '@microsoft/microsoft-graph-client';
 import { BrowserRouter } from 'react-router';
 import { GraphProvider } from './providers/graph.ts';
 import { createDb, DbProvider } from './providers/db.ts';
+import { GraphDriveService } from './providers/graphDrive.ts';
 import { GraphTasksService } from './providers/graphTasks.ts';
 import { SyncProvider, SyncService } from './providers/sync.ts';
 import { SyncTasksService } from './providers/syncTasks.ts';
 import { TasksRepository, TasksRepositoryProvider } from './providers/tasksRepository.ts';
 import './index.css';
 import App from './App.tsx';
+import { SyncNotesService } from './providers/syncNotes.ts';
+import { NotesRepository, NotesRepositoryProvider } from './providers/notesRepository.ts';
 
 const msal = await createStandardPublicClientApplication({
   auth: {
@@ -41,9 +44,12 @@ const graph = Client.init({
 
 const db = createDb();
 const tasksRepository = new TasksRepository(db);
+const notesRepository = new NotesRepository(db);
 const graphTasksService = new GraphTasksService(graph);
+const graphDriveService = new GraphDriveService(graph);
 const syncTasksService = new SyncTasksService(tasksRepository, graphTasksService);
-const syncService = new SyncService(syncTasksService);
+const syncNotesService = new SyncNotesService(notesRepository, graphDriveService);
+const syncService = new SyncService(syncTasksService, syncNotesService);
 
 function MsalAccount({ children }: { children: ReactNode }) {
   if (!msal.getActiveAccount()) {
@@ -66,13 +72,15 @@ createRoot(document.getElementById('root')!).render(
         <MsalAccount>
           <DbProvider db={db}>
             <TasksRepositoryProvider value={tasksRepository}>
-              <GraphProvider client={graph}>
-                <SyncProvider syncService={syncService}>
-                  <BrowserRouter>
-                    <App />
-                  </BrowserRouter>
-                </SyncProvider>
-              </GraphProvider>
+              <NotesRepositoryProvider value={notesRepository}>
+                <GraphProvider client={graph}>
+                  <SyncProvider syncService={syncService}>
+                    <BrowserRouter>
+                      <App />
+                    </BrowserRouter>
+                  </SyncProvider>
+                </GraphProvider>
+              </NotesRepositoryProvider>
             </TasksRepositoryProvider>
           </DbProvider>
         </MsalAccount>
