@@ -19,7 +19,7 @@ export function createTaskFromGraphTask(graphTask: TodoTask): Task {
       isChecked: item.isChecked || false
     })),
     isDeleted: false,
-    isDirty: false
+    isDirty: 0
   };
 }
 
@@ -41,6 +41,6 @@ export function updateTaskFromGraphTask(task: Task, graphTask: TodoTask): Task {
       isChecked: item.isChecked || false
     })),
     isDeleted: false,
-    isDirty: false
+    isDirty: 0
   };
 }

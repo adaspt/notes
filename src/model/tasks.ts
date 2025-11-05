@@ -21,5 +21,5 @@ export interface Task {
   body: string | null;
   checkListItems: TaskCheckListItem[];
   isDeleted: boolean;
-  isDirty: boolean;
+  isDirty: number;
 }

@@ -1,4 +1,4 @@
-import { createContext, createElement, useEffect, type ReactNode } from 'react';
+import { createContext, createElement, useContext, useEffect, type ReactNode } from 'react';
 import type { SyncTasksService } from './syncTasks';
 import type { SyncNotesService } from './syncNotes';
 
@@ -30,4 +30,13 @@ export function SyncProvider({ syncService, children }: SyncProviderProps) {
   }, [syncService]);
 
   return createElement(SyncContext.Provider, { value: syncService }, children);
+}
+
+export function useSync() {
+  const syncService = useContext(SyncContext);
+  if (!syncService) {
+    throw new Error('useSync must be used within a SyncProvider');
+  }
+
+  return syncService;
 }

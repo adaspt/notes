@@ -30,7 +30,21 @@ export class SyncNotesService {
   }
 
   async #pushLocalChanges() {
-    // TODO
+    const changes = await this.#notesRepository.getDirtyNotes();
+    console.log(`Pushing ${changes.length} local changes to Graph Drive`, changes);
+
+    for (const note of changes) {
+      if (note.isDeleted) {
+        if (note.graphId) {
+          // await this.#graphDriveService.deleteFile(note.graphId);
+        }
+      } else {
+        if (note.graphId) {
+          await this.#graphDriveService.updateContent(note.graphId, note.content || '');
+          await this.#notesRepository.updateNote({ ...note, isDirty: 0 });
+        }
+      }
+    }
   }
 
   async #pullChangesFromRemote() {
@@ -70,7 +84,7 @@ export class SyncNotesService {
           parentId,
           name: driveItem.name!,
           content: driveContent,
-          isDirty: false,
+          isDirty: 0,
           isDeleted: false,
           createdDateTime: driveItem.createdDateTime!,
           lastModifiedDateTime: driveItem.lastModifiedDateTime!
@@ -84,7 +98,7 @@ export class SyncNotesService {
         parentId,
         name: driveItem.name!,
         content: driveContent,
-        isDirty: false,
+        isDirty: 0,
         isDeleted: false,
         createdDateTime: driveItem.createdDateTime!,
         lastModifiedDateTime: driveItem.lastModifiedDateTime!

@@ -53,4 +53,8 @@ export class GraphDriveService {
     const response = await this.#graph.api(`/me/drive/items/${id}/content`).get();
     return await new Response(response).text();
   }
+
+  async updateContent(id: string, content: string) {
+    await this.#graph.api(`/me/drive/items/${id}/content`).put(content);
+  }
 }

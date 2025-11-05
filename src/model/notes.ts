@@ -7,5 +7,5 @@ export interface Note {
   createdDateTime: string;
   lastModifiedDateTime: string;
   isDeleted: boolean;
-  isDirty: boolean;
+  isDirty: number;
 }

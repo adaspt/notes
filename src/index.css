@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -117,4 +117,16 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@import '@milkdown/crepe/theme/common/style.css';
+/**
+ * Available themes:
+ * frame, classic, nord
+ * frame-dark, classic-dark, nord-dark
+ */
+@import '@milkdown/crepe/theme/frame.css';
+
+.milkdown .ProseMirror {
+  @apply px-20 py-8 max-sm:px-4 max-sm:py-2;
 }
