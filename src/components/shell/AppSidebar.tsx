@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
-import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar';
+import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar';
+import NotesSidebarGroup from './NotesSidebarGroup';
 
 function AppSidebar() {
   return (
@@ -23,6 +24,9 @@ function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+      <SidebarContent>
+        <NotesSidebarGroup />
+      </SidebarContent>
     </Sidebar>
   );
 }
