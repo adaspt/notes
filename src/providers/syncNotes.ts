@@ -31,8 +31,6 @@ export class SyncNotesService {
 
   async #pushLocalChanges() {
     const changes = await this.#notesRepository.getDirtyNotes();
-    console.log(`Pushing ${changes.length} local changes to Graph Drive`, changes);
-
     for (const note of changes) {
       if (note.isDeleted) {
         if (note.graphId) {

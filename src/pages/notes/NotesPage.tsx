@@ -2,10 +2,10 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Link, Outlet, useParams } from 'react-router';
 import { useNotesRepository } from '@/providers/notesRepository';
 import type { Note } from '@/model/notes';
-import { Item, ItemContent } from '@/components/ui/item';
+import { Item, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
 
 function NotesPage() {
-  const { folderId } = useParams();
+  const { folderId, noteId } = useParams();
   const notesRepository = useNotesRepository();
   const notes = useLiveQuery(() => notesRepository.getNotes(), [], [] as Note[]);
 
@@ -18,11 +18,14 @@ function NotesPage() {
           <hr />
           <div className="flex flex-col gap-2 p-2">
             {data.map((x) => (
-              <Link key={x.id} to={`/notes/${folderId}/${x.id}`}>
-                <Item variant="outline">
-                  <ItemContent>{x.name}</ItemContent>
-                </Item>
-              </Link>
+              <Item key={x.id} variant="outline" className={noteId === String(x.id) ? 'bg-accent' : ''} asChild>
+                <Link to={`/notes/${folderId}/${x.id}`}>
+                  <ItemContent>
+                    <ItemTitle>{x.name}</ItemTitle>
+                    <ItemDescription>{new Date(x.lastModifiedDateTime).toLocaleTimeString()}</ItemDescription>
+                  </ItemContent>
+                </Link>
+              </Item>
             ))}
           </div>
         </div>
