@@ -36,7 +36,7 @@ function NotePage() {
   };
 
   return (
-    <div className="grow">
+    <div className="flex-1 flex flex-col">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold m-2">{note.data?.name}</h1>
         <Button variant={isDirty ? 'destructive' : 'secondary'} className="mx-2" onClick={handleSave}>
@@ -44,7 +44,9 @@ function NotePage() {
         </Button>
       </div>
       <hr />
-      <NoteEditor ref={editor} key={noteId} defaultValue={note.data?.content || ''} onChange={handleChange} />
+      <div className="flex-1 overflow-y-auto">
+        <NoteEditor ref={editor} key={noteId} defaultValue={note.data?.content || ''} onChange={handleChange} />
+      </div>
     </div>
   );
 }

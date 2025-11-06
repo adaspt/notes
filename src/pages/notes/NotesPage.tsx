@@ -14,26 +14,24 @@ function NotesPage() {
     .toSorted((a, b) => new Date(b.lastModifiedDateTime).getTime() - new Date(a.lastModifiedDateTime).getTime());
 
   return (
-    <div>
-      <div className="flex">
-        <div className="flex flex-col grow-0 shrink-0 basis-xs">
-          <h1 className="text-2xl font-semibold m-2">Notes</h1>
-          <hr />
-          <div className="flex flex-col gap-2 p-2">
-            {data.map((x) => (
-              <Item key={x.id} variant="outline" className={noteId === String(x.id) ? 'bg-accent' : ''} asChild>
-                <Link to={`/notes/${folderId}/${x.id}`}>
-                  <ItemContent>
-                    <ItemTitle>{x.name}</ItemTitle>
-                    <ItemDescription>{x.content?.substring(0, 100)}...</ItemDescription>
-                  </ItemContent>
-                </Link>
-              </Item>
-            ))}
-          </div>
+    <div className="flex h-screen">
+      <div className="flex flex-col flex-none w-96">
+        <h1 className="text-2xl font-semibold m-2">Notes</h1>
+        <hr />
+        <div className="overflow-y-auto flex flex-col gap-2 p-2">
+          {data.map((x) => (
+            <Item key={x.id} variant="outline" className={noteId === String(x.id) ? 'bg-accent' : ''} asChild>
+              <Link to={`/notes/${folderId}/${x.id}`}>
+                <ItemContent>
+                  <ItemTitle>{x.name}</ItemTitle>
+                  <ItemDescription>{x.content?.substring(0, 100)}</ItemDescription>
+                </ItemContent>
+              </Link>
+            </Item>
+          ))}
         </div>
-        <Outlet />
       </div>
+      <Outlet />
     </div>
   );
 }
