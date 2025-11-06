@@ -9,7 +9,10 @@ function NotesPage() {
   const notesRepository = useNotesRepository();
   const notes = useLiveQuery(() => notesRepository.getNotes(), [], [] as Note[]);
 
-  const data = notes.filter((x) => String(x.parentId) === folderId && !x.isDeleted && x.content);
+  const data = notes
+    .filter((x) => String(x.parentId) === folderId && !x.isDeleted && x.content)
+    .toSorted((a, b) => new Date(b.lastModifiedDateTime).getTime() - new Date(a.lastModifiedDateTime).getTime());
+
   return (
     <div>
       <div className="flex">
@@ -22,7 +25,7 @@ function NotesPage() {
                 <Link to={`/notes/${folderId}/${x.id}`}>
                   <ItemContent>
                     <ItemTitle>{x.name}</ItemTitle>
-                    <ItemDescription>{new Date(x.lastModifiedDateTime).toLocaleTimeString()}</ItemDescription>
+                    <ItemDescription>{x.content?.substring(0, 100)}...</ItemDescription>
                   </ItemContent>
                 </Link>
               </Item>

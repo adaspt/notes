@@ -5,14 +5,21 @@ import { getMarkdown } from '@milkdown/utils';
 
 interface Props {
   defaultValue: string;
+  onChange?: (isDirty: boolean) => void;
 }
 
 export interface NoteEditorRef {
   getContent: () => string;
 }
 
-const NoteEditorContent = forwardRef<NoteEditorRef, Props>(function ({ defaultValue }, ref) {
-  const { get } = useEditor((root) => new Crepe({ root, defaultValue }));
+const NoteEditorContent = forwardRef<NoteEditorRef, Props>(function ({ defaultValue, onChange }, ref) {
+  const { get } = useEditor((root) =>
+    new Crepe({ root, defaultValue }).on((ctx) =>
+      ctx.markdownUpdated((_, value) => {
+        onChange?.(value !== defaultValue);
+      })
+    )
+  );
 
   useImperativeHandle(ref, () => ({
     getContent: () => get()?.action(getMarkdown()) || ''

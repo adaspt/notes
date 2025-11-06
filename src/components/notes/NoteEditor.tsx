@@ -4,12 +4,13 @@ import NoteEditorContent, { type NoteEditorRef } from './NoteEditorContent';
 
 interface Props {
   defaultValue: string;
+  onChange?: (isDirty: boolean) => void;
 }
 
-const NoteEditor = forwardRef<NoteEditorRef, Props>(function ({ defaultValue }, ref) {
+const NoteEditor = forwardRef<NoteEditorRef, Props>(function ({ defaultValue, onChange }, ref) {
   return (
     <MilkdownProvider>
-      <NoteEditorContent ref={ref} defaultValue={defaultValue} />
+      <NoteEditorContent ref={ref} defaultValue={defaultValue} onChange={onChange} />
     </MilkdownProvider>
   );
 });
