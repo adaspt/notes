@@ -1,12 +1,14 @@
+import { Outlet } from 'react-router';
 import { SidebarProvider } from '../ui/sidebar';
 import AppSidebar from './AppSidebar';
-import { Outlet } from 'react-router';
+import NoteListSection from '../notes/NoteListSection';
 
 function AppLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="w-full">
+      <NoteListSection />
+      <main className="bg-background relative flex flex-col w-full flex-1 h-svh">
         <Outlet />
       </main>
     </SidebarProvider>

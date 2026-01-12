@@ -1,18 +1,22 @@
-import { forwardRef } from 'react';
-import { MilkdownProvider } from '@milkdown/react';
-import NoteEditorContent, { type NoteEditorRef } from './NoteEditorContent';
+import { Crepe } from '@milkdown/crepe';
+import { Milkdown, useEditor } from '@milkdown/react';
+import { memo } from 'react';
 
 interface Props {
   defaultValue: string;
-  onChange?: (isDirty: boolean) => void;
+  onChange: (value: string) => void;
 }
 
-const NoteEditor = forwardRef<NoteEditorRef, Props>(function ({ defaultValue, onChange }, ref) {
-  return (
-    <MilkdownProvider>
-      <NoteEditorContent ref={ref} defaultValue={defaultValue} onChange={onChange} />
-    </MilkdownProvider>
-  );
+const NoteEditor = memo(({ defaultValue, onChange }: Props) => {
+  useEditor((root) => {
+    return new Crepe({ root, defaultValue }).on((ctx) => {
+      ctx.markdownUpdated((_, newValue) => {
+        onChange(newValue);
+      });
+    });
+  });
+
+  return <Milkdown />;
 });
 
 export default NoteEditor;

@@ -1,6 +1,6 @@
 import type { Note } from '@/model/notes';
 import type { Db } from './db';
-import { createContext, useContext } from 'react';
+import { createContext, createElement, useContext, type ReactNode } from 'react';
 
 export class NotesRepository {
   constructor(db: Db) {
@@ -17,8 +17,8 @@ export class NotesRepository {
     return this.#db.notes.where('graphId').equals(graphId).first();
   }
 
-  getNotes() {
-    return this.#db.notes.toArray();
+  getByParentId(parentId: number) {
+    return this.#db.notes.where('parentId').equals(parentId).toArray();
   }
 
   getDirtyNotes() {
@@ -26,6 +26,7 @@ export class NotesRepository {
   }
 
   createNote(note: Note) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...rest } = note;
     return this.#db.notes.add(rest);
   }
@@ -41,7 +42,9 @@ export class NotesRepository {
 
 const NotesRepositoryContext = createContext<NotesRepository | null>(null);
 
-export const NotesRepositoryProvider = NotesRepositoryContext.Provider;
+export function NotesRepositoryProvider({ value, children }: { value: NotesRepository; children: ReactNode }) {
+  return createElement(NotesRepositoryContext.Provider, { value }, children);
+}
 
 export function useNotesRepository() {
   const context = useContext(NotesRepositoryContext);

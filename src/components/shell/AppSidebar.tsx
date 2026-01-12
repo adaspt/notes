@@ -1,32 +1,20 @@
-import { Link } from 'react-router';
-import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar';
-import NotesSidebarGroup from './NotesSidebarGroup';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '../ui/sidebar';
+import ProjectsSection from './ProjectsSection';
+import SyncSection from './sync/SyncSection';
+import VaultSection from './VaultSection';
 
 function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link to="/tasks/today">Today</Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link to="/tasks/later">Later</Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link to="/tasks/someday">Someday</Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <VaultSection />
       </SidebarHeader>
       <SidebarContent>
-        <NotesSidebarGroup />
+        <ProjectsSection />
       </SidebarContent>
+      <SidebarFooter>
+        <SyncSection />
+      </SidebarFooter>
     </Sidebar>
   );
 }
