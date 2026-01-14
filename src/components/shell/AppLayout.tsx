@@ -8,7 +8,7 @@ function AppLayout() {
     <SidebarProvider>
       <AppSidebar />
       <NoteListSection />
-      <main className="bg-background relative flex flex-col w-full flex-1 h-svh">
+      <main className="bg-background relative flex flex-col w-full flex-1 h-svh min-w-0">
         <Outlet />
       </main>
     </SidebarProvider>

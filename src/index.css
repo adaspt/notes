@@ -125,3 +125,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.milkdown .editor {
+  @apply px-4 py-2 sm:px-14 sm:py-4;
+}

@@ -37,10 +37,7 @@ function NoteContent({ asyncNote }: Props) {
           Save
         </Button>
       </div>
-      <div
-        className="flex-1 overflow-auto"
-        style={{ maxWidth: 'calc(100vw - var(--sidebar-width) - var(--list-width))' }}
-      >
+      <div className="flex-1 overflow-auto">
         <NoteEditor defaultValue={defaultValue} onChange={setValue} />
       </div>
     </MilkdownProvider>

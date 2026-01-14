@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { cn } from '@/lib/utils';
 import type { Note } from '@/model/notes';
 import { useNotesRepository } from '@/providers/notesRepository';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemSeparator, ItemTitle } from '@/components/ui/item';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
@@ -13,6 +14,7 @@ const formatDate = (dateString: string) => {
 };
 
 function NoteListSection() {
+  const isMobile = useIsMobile();
   const notesRepository = useNotesRepository();
 
   const { vaultId = '-1', projectId = '-1', noteId } = useParams();
@@ -27,7 +29,7 @@ function NoteListSection() {
     });
 
   return (
-    <div className="border-r w-(--list-width) h-svh flex flex-col">
+    <div className={cn('border-r w-(--list-width) h-svh flex flex-col shrink-0', isMobile && noteId ? 'hidden' : '')}>
       <div className="border-b flex items-center p-2 gap-1">
         <SidebarTrigger />
         <span className="text-base font-medium">{project?.name}</span>
