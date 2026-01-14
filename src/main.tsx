@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ErrorBoundary } from 'react-error-boundary';
 import { createStandardPublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
 import { Client } from '@microsoft/microsoft-graph-client';
@@ -8,8 +9,9 @@ import { createDb } from './providers/db.ts';
 import { SyncService } from './providers/syncService.ts';
 import { NotesRepository, NotesRepositoryProvider } from './providers/notesRepository.ts';
 import { DriveService, DriveServiceProvider } from './providers/driveService.ts';
-import App from './App.tsx';
 import { SyncScheduleService, SyncScheduleProvider } from './providers/syncScheduleService.ts';
+import AppError from './components/shell/AppError.tsx';
+import App from './App.tsx';
 
 const msal = await createStandardPublicClientApplication({
   auth: {
@@ -41,16 +43,18 @@ const syncScheduleService = new SyncScheduleService(syncService, 60 * 60 * 1000)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MsalProvider instance={msal}>
-      <DriveServiceProvider value={driveService}>
-        <NotesRepositoryProvider value={notesRepository}>
-          <SyncScheduleProvider value={syncScheduleService}>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </SyncScheduleProvider>
-        </NotesRepositoryProvider>
-      </DriveServiceProvider>
-    </MsalProvider>
+    <ErrorBoundary FallbackComponent={AppError}>
+      <MsalProvider instance={msal}>
+        <DriveServiceProvider value={driveService}>
+          <NotesRepositoryProvider value={notesRepository}>
+            <SyncScheduleProvider value={syncScheduleService}>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </SyncScheduleProvider>
+          </NotesRepositoryProvider>
+        </DriveServiceProvider>
+      </MsalProvider>
+    </ErrorBoundary>
   </StrictMode>
 );
