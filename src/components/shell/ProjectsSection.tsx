@@ -14,7 +14,7 @@ import {
 function ProjectsSection() {
   const notesRepository = useNotesRepository();
 
-  const { vaultId, projectId } = useParams();
+  const { vaultId = '-1', projectId } = useParams();
 
   const notes = useLiveQuery(() => notesRepository.getByParentId(Number(vaultId)), [vaultId], [] as Note[]);
   const projects = notes.filter((x) => !x.isDeleted && !x.content);

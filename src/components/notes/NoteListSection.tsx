@@ -15,9 +15,9 @@ const formatDate = (dateString: string) => {
 function NoteListSection() {
   const notesRepository = useNotesRepository();
 
-  const { vaultId, projectId, noteId } = useParams();
+  const { vaultId = '-1', projectId = '-1', noteId } = useParams();
 
-  const project = useLiveQuery(() => notesRepository.getById(Number(projectId ?? -1)), [projectId]);
+  const project = useLiveQuery(() => notesRepository.getById(Number(projectId)), [projectId]);
 
   const notes = useLiveQuery(() => notesRepository.getByParentId(Number(projectId)), [projectId], [] as Note[]);
   const activeNotes = notes
