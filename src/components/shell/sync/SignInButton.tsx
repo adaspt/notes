@@ -1,9 +1,16 @@
-import { SidebarMenuButton } from '@/components/ui/sidebar';
+import { useEffect } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { CircleUserRound } from 'lucide-react';
+import { SidebarMenuButton } from '@/components/ui/sidebar';
 
 function SignInButton() {
   const msal = useMsal();
+
+  useEffect(() => {
+    msal.instance.ssoSilent({ scopes: ['https://graph.microsoft.com/.default'] }).catch((error) => {
+      console.warn('Silent SSO failed', error);
+    });
+  }, [msal]);
 
   const handleLogin = async () => {
     try {
