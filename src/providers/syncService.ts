@@ -1,5 +1,6 @@
 import type { NotesRepository } from './notesRepository';
 import type { DriveService } from './driveService';
+import type { DriveItem } from '@microsoft/microsoft-graph-types';
 
 export class SyncService {
   constructor(notesRepository: NotesRepository, driveService: DriveService) {
@@ -24,6 +25,20 @@ export class SyncService {
         if (note.graphId) {
           await this.#driveService.updateContent(note.graphId, note.content || '');
           await this.#notesRepository.updateNote({ ...note, isDirty: 0 });
+        } else {
+          const parent = await this.#notesRepository.getById(note.parentId);
+          if (!parent || !parent.graphId) {
+            continue; // TODO: repeat, when parent is created
+          }
+
+          let item: DriveItem;
+          if (note.content !== null) {
+            item = await this.#driveService.createFile(parent.graphId, note.name, note.content);
+          } else {
+            item = await this.#driveService.createFolder(parent.graphId, note.name);
+          }
+
+          await this.#notesRepository.updateNote({ ...note, graphId: item.id!, isDirty: 0 });
         }
       }
     }

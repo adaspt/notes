@@ -1,4 +1,5 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '../ui/sidebar';
+import CreateNoteGroup from './CreateNoteGroup';
 import ProjectsSection from './ProjectsSection';
 import SyncSection from './sync/SyncSection';
 import VaultSection from './VaultSection';
@@ -8,6 +9,7 @@ function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <VaultSection />
+        <CreateNoteGroup />
       </SidebarHeader>
       <SidebarContent>
         <ProjectsSection />

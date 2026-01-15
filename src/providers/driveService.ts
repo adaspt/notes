@@ -50,6 +50,17 @@ export class DriveService {
     saveDeltaLink(deltaLink);
   }
 
+  async createFile(parentId: string, name: string, content: string): Promise<DriveItem> {
+    const path = `/me/drive/items/${parentId}:/${encodeURIComponent(name)}:/content`;
+    return this.#graph.api(path).put(content) as Promise<DriveItem>;
+  }
+
+  async createFolder(parentId: string, name: string): Promise<DriveItem> {
+    const path = `/me/drive/items/${parentId}/children`;
+    const content = { name, folder: {}, '@microsoft.graph.conflictBehavior': 'rename' };
+    return this.#graph.api(path).post(content) as Promise<DriveItem>;
+  }
+
   async getContent(id: string): Promise<string | null> {
     const response = await this.#graph.api(`/me/drive/items/${id}/content`).get();
     return await new Response(response).text();

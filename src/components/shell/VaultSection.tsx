@@ -1,3 +1,4 @@
+import { Link, useParams } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Check, ChevronsUpDown, Notebook } from 'lucide-react';
 import type { Note } from '@/model/notes';
@@ -9,7 +10,6 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { Link, useParams } from 'react-router';
 
 function VaultSection() {
   const notesRepository = useNotesRepository();
