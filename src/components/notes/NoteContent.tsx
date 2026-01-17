@@ -1,4 +1,4 @@
-import { use, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { MilkdownProvider } from '@milkdown/react';
 import type { Note } from '@/model/notes';
@@ -24,6 +24,7 @@ function NoteContent({ asyncNote }: Props) {
 
   const [defaultValue, setDefaultValue] = useState(note?.content || '');
   const [value, setValue] = useState(defaultValue);
+  const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleSave = async () => {
     await notesRepository.updateNote({
@@ -47,6 +48,20 @@ function NoteContent({ asyncNote }: Props) {
     syncScheduleService.requestSync();
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveButtonRef.current?.click();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const dirty = value !== defaultValue;
   return (
     <MilkdownProvider>
@@ -59,7 +74,7 @@ function NoteContent({ asyncNote }: Props) {
             <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant={dirty ? 'destructive' : 'default'} disabled={!dirty} onClick={handleSave}>
+        <Button ref={saveButtonRef} variant={dirty ? 'destructive' : 'default'} disabled={!dirty} onClick={handleSave}>
           Save
         </Button>
       </div>
