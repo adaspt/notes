@@ -61,6 +61,10 @@ export class DriveService {
     return this.#graph.api(path).post(content) as Promise<DriveItem>;
   }
 
+  async deleteItem(id: string) {
+    await this.#graph.api(`/me/drive/items/${id}`).delete();
+  }
+
   async getContent(id: string): Promise<string | null> {
     const response = await this.#graph.api(`/me/drive/items/${id}/content`).get();
     return await new Response(response).text();

@@ -20,7 +20,11 @@ export class SyncService {
     const changes = await this.#notesRepository.getDirtyNotes();
     for (const note of changes) {
       if (note.isDeleted) {
-        // TODO: delete from drive
+        if (note.graphId) {
+          await this.#driveService.deleteItem(note.graphId);
+        }
+
+        await this.#notesRepository.deleteNote(note.id);
       } else {
         if (note.graphId) {
           await this.#driveService.updateContent(note.graphId, note.content || '');
@@ -59,7 +63,7 @@ export class SyncService {
       const note = await this.#notesRepository.getByGraphId(item.id!);
       if ('deleted' in item) {
         if (note) {
-          this.#notesRepository.deleteNote(note.id);
+          await this.#notesRepository.deleteNote(note.id);
         }
 
         continue;
