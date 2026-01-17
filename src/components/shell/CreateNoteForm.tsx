@@ -22,6 +22,7 @@ function CreateNoteForm({ id, onSaved }: Props) {
       id: 0,
       graphId: null,
       parentId: Number(projectId),
+      type: 'file',
       name: `${name}.md`,
       content: '',
       createdDateTime: new Date().toISOString(),

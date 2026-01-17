@@ -23,7 +23,7 @@ function NoteListSection() {
 
   const notes = useLiveQuery(() => notesRepository.getByParentId(Number(projectId)), [projectId], [] as Note[]);
   const activeNotes = notes
-    .filter((x) => !x.isDeleted)
+    .filter((x) => !x.isDeleted && x.type === 'file')
     .sort((a, b) => {
       return new Date(b.lastModifiedDateTime).getTime() - new Date(a.lastModifiedDateTime).getTime();
     });

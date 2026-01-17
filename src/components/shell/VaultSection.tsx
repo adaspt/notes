@@ -17,7 +17,7 @@ function VaultSection() {
   const { vaultId } = useParams();
 
   const notes = useLiveQuery(() => notesRepository.getByParentId(0), [], [] as Note[]);
-  const root = notes.filter((x) => !x.isDeleted && !x.content);
+  const root = notes.filter((x) => !x.isDeleted && x.type === 'folder');
   const selected = vaultId ? notes.find((x) => String(x.id) === vaultId) : null;
 
   return (

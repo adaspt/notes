@@ -15,6 +15,10 @@ interface Props {
 function NoteContent({ asyncNote }: Props) {
   const navigate = useNavigate();
   const note = use(asyncNote);
+  if (note?.type !== 'file') {
+    throw new Error('Can only open markdown notes');
+  }
+
   const notesRepository = useNotesRepository();
   const syncScheduleService = useSyncScheduleService();
 

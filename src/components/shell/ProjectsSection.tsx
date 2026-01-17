@@ -17,7 +17,7 @@ function ProjectsSection() {
   const { vaultId = '-1', projectId } = useParams();
 
   const notes = useLiveQuery(() => notesRepository.getByParentId(Number(vaultId)), [vaultId], [] as Note[]);
-  const projects = notes.filter((x) => !x.isDeleted && !x.content);
+  const projects = notes.filter((x) => !x.isDeleted && x.type === 'folder');
 
   return (
     <SidebarGroup>

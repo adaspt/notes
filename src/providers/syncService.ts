@@ -69,7 +69,8 @@ export class SyncService {
         continue;
       }
 
-      const content = item.file ? await this.#driveService.getContent(item.id!) : null;
+      const content =
+        item.file && item.file.mimeType === 'text/markdown' ? await this.#driveService.getContent(item.id!) : null;
 
       let parentId = 0;
       if (item.parentReference && item.parentReference.id !== appRoot.id) {
@@ -82,6 +83,7 @@ export class SyncService {
           id: 0,
           graphId: item.id!,
           parentId,
+          type: item.folder ? 'folder' : 'file',
           name: item.name!,
           content: content ?? '',
           isDirty: 0,
