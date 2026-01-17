@@ -1,16 +1,19 @@
 import { use, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { MilkdownProvider } from '@milkdown/react';
 import type { Note } from '@/model/notes';
 import { useNotesRepository } from '@/providers/notesRepository';
 import { useSyncScheduleService } from '@/providers/syncScheduleService';
-import NoteEditor from './NoteEditor';
 import { Button } from '../ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import NoteEditor from './NoteEditor';
 
 interface Props {
   asyncNote: Promise<Note | undefined>;
 }
 
 function NoteContent({ asyncNote }: Props) {
+  const navigate = useNavigate();
   const note = use(asyncNote);
   const notesRepository = useNotesRepository();
   const syncScheduleService = useSyncScheduleService();
@@ -29,10 +32,29 @@ function NoteContent({ asyncNote }: Props) {
     syncScheduleService.requestSync();
   };
 
+  const handleDelete = async () => {
+    await notesRepository.updateNote({
+      ...note!,
+      isDeleted: 1,
+      isDirty: 1
+    });
+
+    navigate('..');
+    syncScheduleService.requestSync();
+  };
+
   const dirty = value !== defaultValue;
   return (
     <MilkdownProvider>
-      <div className="flex items-center justify-end p-1 border-b">
+      <div className="flex items-center justify-end p-1 gap-2 border-b">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary">More</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Button variant={dirty ? 'destructive' : 'default'} disabled={!dirty} onClick={handleSave}>
           Save
         </Button>
