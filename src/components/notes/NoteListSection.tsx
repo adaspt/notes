@@ -1,11 +1,10 @@
-import { Fragment } from 'react';
 import { Link, useParams } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { cn } from '@/lib/utils';
 import type { Note } from '@/model/notes';
 import { useNotesRepository } from '@/providers/notesRepository';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Item, ItemContent, ItemDescription, ItemGroup, ItemSeparator, ItemTitle } from '@/components/ui/item';
+import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from '@/components/ui/item';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const formatDate = (dateString: string) => {
@@ -34,19 +33,19 @@ function NoteListSection() {
         <SidebarTrigger />
         <span className="text-base font-medium">{project?.name}</span>
       </div>
-      <ItemGroup className="min-h-0 overflow-y-auto">
+      <ItemGroup className="min-h-0 overflow-y-auto gap-2 p-2">
         {activeNotes.map((note) => (
-          <Fragment key={note.id}>
-            <Item className={cn({ 'bg-accent': note.id === Number(noteId) })} asChild>
-              <Link to={`/${vaultId}/${projectId}/${note.id}`}>
-                <ItemContent>
-                  <ItemTitle>{note.name}</ItemTitle>
-                  <ItemDescription>{formatDate(note.lastModifiedDateTime)}</ItemDescription>
-                </ItemContent>
-              </Link>
-            </Item>
-            <ItemSeparator />
-          </Fragment>
+          <Item key={note.id} variant="outline" className={cn({ 'bg-accent': note.id === Number(noteId) })} asChild>
+            <Link to={`/${vaultId}/${projectId}/${note.id}`}>
+              <ItemContent>
+                <ItemTitle>{note.name}</ItemTitle>
+                <ItemDescription className="wrap-anywhere">{note.content?.replaceAll('\n', ' ')}</ItemDescription>
+                <ItemDescription className="text-xs">
+                  Last modified: {formatDate(note.lastModifiedDateTime)}
+                </ItemDescription>
+              </ItemContent>
+            </Link>
+          </Item>
         ))}
       </ItemGroup>
     </div>
