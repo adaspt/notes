@@ -8,11 +8,13 @@ import {
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarMenuButton
+  SidebarMenuButton,
+  useSidebar
 } from '../ui/sidebar';
 
 function ProjectsSection() {
   const notesRepository = useNotesRepository();
+  const { setOpenMobile } = useSidebar();
 
   const { vaultId = '-1', projectId } = useParams();
 
@@ -27,7 +29,9 @@ function ProjectsSection() {
           {projects.map((project) => (
             <SidebarMenuItem key={project.id}>
               <SidebarMenuButton asChild isActive={String(project.id) === projectId}>
-                <Link to={`/${vaultId}/${project.id}`}>{project.name}</Link>
+                <Link to={`/${vaultId}/${project.id}`} onClick={() => setOpenMobile(false)}>
+                  {project.name}
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
