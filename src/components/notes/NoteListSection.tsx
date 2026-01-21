@@ -29,7 +29,7 @@ function NoteListSection() {
     });
 
   return (
-    <div className={cn('border-r w-(--list-width) h-svh flex flex-col shrink-0', isMobile && noteId ? 'hidden' : '')}>
+    <div className={cn('border-r w-md sm:w-xs max-w-dvw h-dvh flex flex-col', isMobile && noteId ? 'hidden' : '')}>
       <div className="border-b flex items-center p-2 gap-1">
         <SidebarTrigger />
         <span className="text-base font-medium">{project?.name}</span>
