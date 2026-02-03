@@ -7,7 +7,7 @@ export function createDb() {
   };
 
   db.version(1).stores({
-    notes: '++id, &graphId, parentId, isDirty'
+    notes: '++id, &graphId, parentId, type, isDirty'
   });
 
   return db;

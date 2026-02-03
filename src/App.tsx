@@ -6,11 +6,9 @@ function App() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
-        <Route path=":vaultId?">
-          <Route path=":projectId?">
-            <Route index />
-            <Route path=":noteId" element={<NoteDetails />} />
-          </Route>
+        <Route path=":folderId?">
+          <Route index />
+          <Route path=":noteId" element={<NoteDetails />} />
         </Route>
       </Route>
     </Routes>

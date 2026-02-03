@@ -16,11 +16,11 @@ function NoteListSection() {
   const isMobile = useIsMobile();
   const notesRepository = useNotesRepository();
 
-  const { vaultId = '-1', projectId = '-1', noteId } = useParams();
+  const { folderId = '-1', noteId } = useParams();
 
-  const project = useLiveQuery(() => notesRepository.getById(Number(projectId)), [projectId]);
+  const folder = useLiveQuery(() => notesRepository.getById(Number(folderId)), [folderId]);
 
-  const notes = useLiveQuery(() => notesRepository.getByParentId(Number(projectId)), [projectId], [] as Note[]);
+  const notes = useLiveQuery(() => notesRepository.getByParentId(Number(folderId)), [folderId], [] as Note[]);
   const activeNotes = notes
     .filter((x) => !x.isDeleted && x.type === 'file')
     .sort((a, b) => {
@@ -31,12 +31,12 @@ function NoteListSection() {
     <div className={cn('border-r w-md sm:w-xs max-w-dvw h-dvh flex flex-col', isMobile && noteId ? 'hidden' : '')}>
       <div className="border-b flex items-center p-2 gap-1">
         <SidebarTrigger />
-        <span className="text-base font-medium">{project?.name}</span>
+        <span className="text-base font-medium">{folder?.name}</span>
       </div>
       <ItemGroup className="min-h-0 overflow-y-auto gap-2 p-2">
         {activeNotes.map((note) => (
           <Item key={note.id} variant="outline" className={cn({ 'bg-accent': note.id === Number(noteId) })} asChild>
-            <Link to={`/${vaultId}/${projectId}/${note.id}`}>
+            <Link to={`/${folderId}/${note.id}`}>
               <ItemContent>
                 <ItemTitle>{note.name}</ItemTitle>
                 <ItemDescription className="wrap-anywhere">{note.content?.replaceAll('\n', ' ')}</ItemDescription>

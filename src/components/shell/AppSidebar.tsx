@@ -1,18 +1,41 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '../ui/sidebar';
+import NoteFolders from '@/features/note-folders/note-folders';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem
+} from '../ui/sidebar';
 import CreateNoteGroup from './CreateNoteGroup';
-import ProjectsSection from './ProjectsSection';
 import SyncSection from './sync/SyncSection';
-import VaultSection from './VaultSection';
+import { Notebook } from 'lucide-react';
+import { Link } from 'react-router';
 
 function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <VaultSection />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Link to="/">
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                  <Notebook className="size-5" />
+                </div>
+                <div className="flex flex-col gap-0.5 leading-none">
+                  <span className="font-medium">Notes</span>
+                  <span className="">v3.0.0</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
         <CreateNoteGroup />
       </SidebarHeader>
       <SidebarContent>
-        <ProjectsSection />
+        <NoteFolders />
       </SidebarContent>
       <SidebarFooter>
         <SyncSection />

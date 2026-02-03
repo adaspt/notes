@@ -1,8 +1,10 @@
+export type NoteType = 'folder' | 'file';
+
 export interface Note {
   id: number;
   graphId: string | null;
   parentId: number;
-  type: 'folder' | 'file';
+  type: NoteType;
   name: string;
   content: string | null;
   createdDateTime: string;
@@ -10,3 +12,5 @@ export interface Note {
   isDeleted: number;
   isDirty: number;
 }
+
+export const folderComparer = (a: Note, b: Note) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });

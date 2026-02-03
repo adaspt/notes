@@ -7,21 +7,21 @@ import { useSyncScheduleService } from '@/providers/syncScheduleService';
 
 interface Props {
   id: string;
-  onSaved: (vaultId: number, projectId: number, id: number) => void;
+  onSaved: (folderId: number, id: number) => void;
 }
 
 function CreateNoteForm({ id, onSaved }: Props) {
   const notesRepository = useNotesRepository();
   const sync = useSyncScheduleService();
 
-  const { vaultId, projectId } = useParams();
+  const { folderId } = useParams();
 
   const createNote = async (_: FormData, data: FormData) => {
     const name = data.get('name') as string;
     const id = await notesRepository.createNote({
       id: 0,
       graphId: null,
-      parentId: Number(projectId),
+      parentId: Number(folderId),
       type: 'file',
       name: `${name}.md`,
       content: '',
@@ -33,7 +33,7 @@ function CreateNoteForm({ id, onSaved }: Props) {
 
     sync.requestSync();
 
-    onSaved(Number(vaultId), Number(projectId), id);
+    onSaved(Number(folderId), id);
 
     return data;
   };

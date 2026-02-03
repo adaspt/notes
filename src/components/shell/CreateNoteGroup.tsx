@@ -19,9 +19,9 @@ function CreateNoteGroup() {
 
   const [open, setOpen] = useState(false);
 
-  const handleSaved = (vaultId: number, projectId: number, id: number) => {
+  const handleSaved = (folderId: number, id: number) => {
     setOpen(false);
-    navigate(`/${vaultId}/${projectId}/${id}`);
+    navigate(`/${folderId}/${id}`);
   };
 
   return (
@@ -34,7 +34,7 @@ function CreateNoteGroup() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create note</DialogTitle>
-              <DialogDescription>Create a new note in active project</DialogDescription>
+              <DialogDescription>Create a new note in active folder</DialogDescription>
             </DialogHeader>
             <CreateNoteForm id="create-note-form" onSaved={handleSaved} />
             <DialogFooter>

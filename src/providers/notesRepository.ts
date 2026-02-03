@@ -1,4 +1,4 @@
-import type { Note } from '@/model/notes';
+import type { Note, NoteType } from '@/model/notes';
 import type { Db } from './db';
 import { createContext, createElement, useContext, type ReactNode } from 'react';
 
@@ -19,6 +19,10 @@ export class NotesRepository {
 
   getByParentId(parentId: number) {
     return this.#db.notes.where('parentId').equals(parentId).toArray();
+  }
+
+  getByType(type: NoteType) {
+    return this.#db.notes.where('type').equals(type).toArray();
   }
 
   getDirtyNotes() {
