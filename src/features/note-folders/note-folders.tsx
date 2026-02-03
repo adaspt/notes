@@ -1,8 +1,8 @@
+import { useParams } from 'react-router';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { folderComparer, type Note } from '@/model/notes';
 import { useNotesRepository } from '@/providers/notesRepository';
-import { useLiveQuery } from 'dexie-react-hooks';
 import NoteFolderGroup from './note-folder-group';
-import { useParams } from 'react-router';
 
 const byParent = (map: Map<number, Note[]>, item: Note) => {
   const collection = map.get(item.parentId) || [];

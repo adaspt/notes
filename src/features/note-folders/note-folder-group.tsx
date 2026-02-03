@@ -1,3 +1,6 @@
+import { Link } from 'react-router';
+import { ChevronRight } from 'lucide-react';
+import type { Note } from '@/model/notes';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   SidebarGroup,
@@ -5,11 +8,9 @@ import {
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem
+  SidebarMenuItem,
+  useSidebar
 } from '@/components/ui/sidebar';
-import type { Note } from '@/model/notes';
-import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router';
 
 interface Props {
   folder: Note;
@@ -18,6 +19,14 @@ interface Props {
 }
 
 function NoteFolderGroup({ folder, foldersByParent, selectedFolderId }: Props) {
+  const { setOpenMobile, isMobile } = useSidebar();
+
+  const handleFolderClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   const folders = foldersByParent.get(folder.id) || [];
   return (
     <Collapsible key={folder.id} defaultOpen className="group/collapsible">
@@ -33,14 +42,18 @@ function NoteFolderGroup({ folder, foldersByParent, selectedFolderId }: Props) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={selectedFolderId === folder.id}>
-                  <Link to={`/${folder.id}`}>Inbox</Link>
+                  <Link to={`/${folder.id}`} onClick={handleFolderClick}>
+                    Inbox
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
             {folders.map((subFolder) => (
               <SidebarMenuItem key={subFolder.id}>
                 <SidebarMenuButton asChild isActive={selectedFolderId === subFolder.id}>
-                  <Link to={`/${subFolder.id}`}>{subFolder.name}</Link>
+                  <Link to={`/${subFolder.id}`} onClick={handleFolderClick}>
+                    {subFolder.name}
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
