@@ -48,7 +48,7 @@ function NoteListSection() {
       <ItemGroup className="min-h-0 overflow-y-auto gap-2 p-2">
         {activeNotes.map((note) => (
           <Item key={note.id} variant="outline" className={cn({ 'bg-accent': note.id === Number(noteId) })} asChild>
-            <Link to={`/${note.parentId}/${note.id}`}>
+            <Link to={`/notes/${note.parentId}/${note.id}`}>
               <ItemContent>
                 <ItemTitle>{note.name}</ItemTitle>
                 <ItemDescription className="wrap-anywhere">{note.content?.replaceAll('\n', ' ')}</ItemDescription>

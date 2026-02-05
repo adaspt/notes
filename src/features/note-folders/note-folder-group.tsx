@@ -42,7 +42,7 @@ function NoteFolderGroup({ folder, foldersByParent, selectedFolderId }: Props) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={selectedFolderId === folder.id}>
-                  <Link to={`/${folder.id}`} onClick={handleFolderClick}>
+                  <Link to={`/notes/${folder.id}`} onClick={handleFolderClick}>
                     Inbox
                   </Link>
                 </SidebarMenuButton>
@@ -51,7 +51,7 @@ function NoteFolderGroup({ folder, foldersByParent, selectedFolderId }: Props) {
             {folders.map((subFolder) => (
               <SidebarMenuItem key={subFolder.id}>
                 <SidebarMenuButton asChild isActive={selectedFolderId === subFolder.id}>
-                  <Link to={`/${subFolder.id}`} onClick={handleFolderClick}>
+                  <Link to={`/notes/${subFolder.id}`} onClick={handleFolderClick}>
                     {subFolder.name}
                   </Link>
                 </SidebarMenuButton>

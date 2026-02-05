@@ -1,22 +1,36 @@
 import type { NotesRepository } from './notesRepository';
 import type { DriveService } from './driveService';
 import type { DriveItem } from '@microsoft/microsoft-graph-types';
+import type { TasksRepository } from './tasksRepository';
+import type { TodoService } from './todoService';
+import { createTaskFromGraphTask, updateTaskFromGraphTask } from '@/model/tasks';
 
 export class SyncService {
-  constructor(notesRepository: NotesRepository, driveService: DriveService) {
+  constructor(
+    notesRepository: NotesRepository,
+    tasksRepository: TasksRepository,
+    driveService: DriveService,
+    todoService: TodoService
+  ) {
     this.#notesRepository = notesRepository;
+    this.#tasksRepository = tasksRepository;
     this.#driveService = driveService;
+    this.#todoService = todoService;
   }
 
   #notesRepository: NotesRepository;
+  #tasksRepository: TasksRepository;
   #driveService: DriveService;
+  #todoService: TodoService;
 
   async sync() {
-    await this.#pushChanges();
-    await this.#pullChanges();
+    await this.#pushNoteChanges();
+    await this.#pullNoteChanges();
+    await this.#pushTaskChanges();
+    await this.#pullTaskChanges();
   }
 
-  async #pushChanges() {
+  async #pushNoteChanges() {
     const changes = await this.#notesRepository.getDirtyNotes();
     for (const note of changes) {
       if (note.isDeleted) {
@@ -48,7 +62,7 @@ export class SyncService {
     }
   }
 
-  async #pullChanges() {
+  async #pullNoteChanges() {
     const fileChanges = await this.#driveService.getFilesDelta();
     if (!fileChanges.data.length) {
       return;
@@ -108,5 +122,39 @@ export class SyncService {
     }
 
     this.#driveService.saveDriveDeltaLink(fileChanges.deltaLink);
+  }
+
+  async #pushTaskChanges() {
+    // const changes = await this.#tasksRepository.getDirtyTasks();
+    // for (const task of changes) {
+    //   if (task.isDeleted) {
+    //     if (task.graphId) {
+    //       await this.#todoService.deleteTask(task.graphId);
+    //     }
+    //   }
+    // }
+  }
+
+  async #pullTaskChanges() {
+    const graphTasks = await this.#todoService.getTasksDelta();
+    for (const graphTask of graphTasks.data) {
+      const task = await this.#tasksRepository.getByGraphId(graphTask.id!);
+      if ('@removed' in graphTask) {
+        if (task) {
+          if (graphTask['@removed'].reason === 'deleted') {
+            await this.#tasksRepository.deleteTask(task.id);
+          } else {
+            task.isDeleted = 1;
+            await this.#tasksRepository.updateTask(task);
+          }
+        }
+      } else {
+        if (!task) {
+          await this.#tasksRepository.createTask(createTaskFromGraphTask(graphTask));
+        } else {
+          await this.#tasksRepository.updateTask(updateTaskFromGraphTask(task, graphTask));
+        }
+      }
+    }
   }
 }

@@ -8,7 +8,9 @@ import { BrowserRouter } from 'react-router';
 import { createDb } from './providers/db.ts';
 import { SyncService } from './providers/syncService.ts';
 import { NotesRepository, NotesRepositoryProvider } from './providers/notesRepository.ts';
+import { TasksRepository, TasksRepositoryProvider } from './providers/tasksRepository.ts';
 import { DriveService, DriveServiceProvider } from './providers/driveService.ts';
+import { TodoService } from './providers/todoService.ts';
 import { SyncScheduleService, SyncScheduleProvider } from './providers/syncScheduleService.ts';
 import AppError from './components/shell/AppError.tsx';
 import App from './App.tsx';
@@ -37,8 +39,10 @@ const graph = Client.init({
 
 const db = createDb();
 const driveService = new DriveService(graph);
+const todoService = new TodoService(graph);
 const notesRepository = new NotesRepository(db);
-const syncService = new SyncService(notesRepository, driveService);
+const tasksRepository = new TasksRepository(db);
+const syncService = new SyncService(notesRepository, tasksRepository, driveService, todoService);
 const syncScheduleService = new SyncScheduleService(syncService, 60 * 60 * 1000);
 
 createRoot(document.getElementById('root')!).render(
@@ -47,11 +51,13 @@ createRoot(document.getElementById('root')!).render(
       <MsalProvider instance={msal}>
         <DriveServiceProvider value={driveService}>
           <NotesRepositoryProvider value={notesRepository}>
-            <SyncScheduleProvider value={syncScheduleService}>
-              <BrowserRouter>
-                <App />
-              </BrowserRouter>
-            </SyncScheduleProvider>
+            <TasksRepositoryProvider value={tasksRepository}>
+              <SyncScheduleProvider value={syncScheduleService}>
+                <BrowserRouter>
+                  <App />
+                </BrowserRouter>
+              </SyncScheduleProvider>
+            </TasksRepositoryProvider>
           </NotesRepositoryProvider>
         </DriveServiceProvider>
       </MsalProvider>
