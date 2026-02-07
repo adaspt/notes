@@ -1,9 +1,9 @@
-import type { NotesRepository } from './notesRepository';
-import type { DriveService } from './driveService';
 import type { DriveItem } from '@microsoft/microsoft-graph-types';
-import type { TasksRepository } from './tasksRepository';
+import { updateTaskFromGraphTask } from '@/model/tasks';
+import type { DriveService } from './driveService';
 import type { TodoService } from './todoService';
-import { createTaskFromGraphTask, updateTaskFromGraphTask } from '@/model/tasks';
+import type { NotesRepository } from './notesRepository';
+import type { TasksRepository } from './tasksRepository';
 
 export class SyncService {
   constructor(
@@ -150,7 +150,7 @@ export class SyncService {
         }
       } else {
         if (!task) {
-          await this.#tasksRepository.createTask(createTaskFromGraphTask(graphTask));
+          await this.#tasksRepository.createTask(updateTaskFromGraphTask({}, graphTask));
         } else {
           await this.#tasksRepository.updateTask(updateTaskFromGraphTask(task, graphTask));
         }
