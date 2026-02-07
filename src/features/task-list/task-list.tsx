@@ -20,7 +20,7 @@ function TaskList() {
   );
 
   const activeTasks = tasks
-    .filter((x) => !x.isDeleted && (!x.startDateTime || new Date(x.startDateTime) >= new Date()))
+    .filter((x) => !x.isDeleted && (!x.startDateTime || new Date(x.startDateTime) <= new Date()))
     .toSorted((a, b) => {
       if (a.importance !== b.importance) {
         if (a.importance === 'high') return -1;

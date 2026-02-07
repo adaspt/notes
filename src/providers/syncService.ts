@@ -156,5 +156,7 @@ export class SyncService {
         }
       }
     }
+
+    this.#todoService.saveDeltaLink(graphTasks.deltaLink);
   }
 }
