@@ -12,8 +12,8 @@ import { TasksRepository, TasksRepositoryProvider } from './providers/tasksRepos
 import { DriveService, DriveServiceProvider } from './providers/driveService.ts';
 import { TodoService } from './providers/todoService.ts';
 import { SyncScheduleService, SyncScheduleProvider } from './providers/syncScheduleService.ts';
-import AppError from './components/shell/AppError.tsx';
-import App from './App.tsx';
+import AppError from './components/shell/app-error';
+import App from './app';
 
 const msal = await createStandardPublicClientApplication({
   auth: {

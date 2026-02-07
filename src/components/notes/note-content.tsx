@@ -6,7 +6,7 @@ import { useNotesRepository } from '@/providers/notesRepository';
 import { useSyncScheduleService } from '@/providers/syncScheduleService';
 import { Button } from '../ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import NoteEditor from './NoteEditor';
+import NoteEditor from './note-editor';
 
 interface Props {
   asyncNote: Promise<Note | undefined>;

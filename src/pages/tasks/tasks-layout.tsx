@@ -1,4 +1,4 @@
-import ListLayout from '@/components/shell/ListLayout';
+import ListLayout from '@/components/shell/list-layout';
 import TaskList from '@/features/task-list/task-list';
 
 function TasksLayout() {

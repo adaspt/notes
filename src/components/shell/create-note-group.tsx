@@ -11,7 +11,7 @@ import {
   DialogTrigger
 } from '../ui/dialog';
 import { SidebarGroup, SidebarGroupContent } from '../ui/sidebar';
-import CreateNoteForm from './CreateNoteForm';
+import CreateNoteForm from './create-note-form';
 import { useNavigate } from 'react-router';
 
 function CreateNoteGroup() {

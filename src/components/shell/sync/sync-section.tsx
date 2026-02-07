@@ -1,7 +1,7 @@
 import { SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
-import SignInButton from './SignInButton';
-import SyncButton from './SyncButton';
+import SignInButton from './sign-in-button';
+import SyncButton from './sync-button';
 
 function SyncSection() {
   return (

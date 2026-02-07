@@ -8,8 +8,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '../ui/sidebar';
-import CreateNoteGroup from './CreateNoteGroup';
-import SyncSection from './sync/SyncSection';
+import CreateNoteGroup from './create-note-group';
+import SyncSection from './sync/sync-section';
 import { Notebook } from 'lucide-react';
 import { Link } from 'react-router';
 

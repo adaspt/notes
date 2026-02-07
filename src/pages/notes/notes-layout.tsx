@@ -1,4 +1,4 @@
-import ListLayout from '@/components/shell/ListLayout';
+import ListLayout from '@/components/shell/list-layout';
 import NoteList from '@/features/note-list/note-list';
 
 function NotesLayout() {
