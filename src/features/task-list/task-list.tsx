@@ -1,11 +1,50 @@
 import { Link, useParams } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { cn } from '@/lib/utils';
+import type { Task } from '@/model/tasks';
 import { useTasksRepository } from '@/providers/tasksRepository';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Item, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
 import { ItemGroup } from '@/components/ui/item';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+
+const getTitle = (filter: string) => {
+  switch (filter) {
+    case 'later':
+      return 'Later';
+    case 'backlog':
+      return 'Backlog';
+    default:
+      return 'Today';
+  }
+};
+
+const byFolder = (filter: string) => {
+  const now = new Date();
+
+  return (task: Task) => {
+    if (task.isDeleted) {
+      return false;
+    }
+
+    if (filter === 'later') {
+      return (
+        (task.status === 'notStarted' || task.status === 'inProgress' || task.status === 'waitingOnOthers') &&
+        task.startDateTime &&
+        new Date(task.startDateTime) > now
+      );
+    }
+
+    if (filter === 'backlog') {
+      return task.status === 'deferred';
+    }
+
+    return (
+      (task.status === 'notStarted' || task.status === 'inProgress' || task.status === 'waitingOnOthers') &&
+      (!task.startDateTime || new Date(task.startDateTime) <= now)
+    );
+  };
+};
 
 function TaskList() {
   const isMobile = useIsMobile();
@@ -14,29 +53,27 @@ function TaskList() {
   const { tasks: tasksFilter = 'today', taskId } = useParams();
 
   const tasks = useLiveQuery(
-    () => tasksRepository.getTasksByStatuses(['notStarted', 'inProgress', 'waitingOnOthers']),
+    () => tasksRepository.getTasksByStatuses(['notStarted', 'inProgress', 'waitingOnOthers', 'deferred']),
     [],
     []
   );
 
-  const activeTasks = tasks
-    .filter((x) => !x.isDeleted && (!x.startDateTime || new Date(x.startDateTime) <= new Date()))
-    .toSorted((a, b) => {
-      if (a.importance !== b.importance) {
-        if (a.importance === 'high') return -1;
-        if (b.importance === 'high') return 1;
-        if (a.importance === 'normal') return -1;
-        return 1;
-      }
+  const activeTasks = tasks.filter(byFolder(tasksFilter)).toSorted((a, b) => {
+    if (a.importance !== b.importance) {
+      if (a.importance === 'high') return -1;
+      if (b.importance === 'high') return 1;
+      if (a.importance === 'normal') return -1;
+      return 1;
+    }
 
-      return new Date(a.createdDateTime).getTime() - new Date(b.createdDateTime).getTime();
-    });
+    return new Date(a.createdDateTime).getTime() - new Date(b.createdDateTime).getTime();
+  });
 
   return (
     <div className={cn('border-r w-md sm:w-xs max-w-dvw h-dvh flex flex-col', isMobile && taskId ? 'hidden' : '')}>
       <div className="border-b flex items-center p-2 gap-1">
         <SidebarTrigger />
-        <span className="text-base font-medium">{tasksFilter === 'today' ? 'Today' : 'All'}</span>
+        <span className="text-base font-medium">{getTitle(tasksFilter)}</span>
       </div>
       <ItemGroup className="min-h-0 overflow-y-auto gap-2 p-2">
         {activeTasks.map((task) => (

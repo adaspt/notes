@@ -1,3 +1,6 @@
+import { Link } from 'react-router';
+import { Notebook } from 'lucide-react';
+import TaskFolders from '@/features/task-folders/task-folders';
 import NoteFolders from '@/features/note-folders/note-folders';
 import {
   Sidebar,
@@ -10,8 +13,6 @@ import {
 } from '../ui/sidebar';
 import CreateNoteGroup from './create-note-group';
 import SyncSection from './sync/sync-section';
-import { Notebook } from 'lucide-react';
-import { Link } from 'react-router';
 
 function AppSidebar() {
   return (
@@ -35,6 +36,7 @@ function AppSidebar() {
         <CreateNoteGroup />
       </SidebarHeader>
       <SidebarContent>
+        <TaskFolders />
         <NoteFolders />
       </SidebarContent>
       <SidebarFooter>
