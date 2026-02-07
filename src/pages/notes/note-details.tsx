@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { useParams } from 'react-router';
 import { useNotesRepository } from '@/providers/notesRepository';
-import NoteContent from './note-content';
+import NoteContent from '../../components/notes/note-content';
 
 function NoteDetails() {
   const notesRepository = useNotesRepository();

@@ -1,8 +1,8 @@
 import { Route, Routes } from 'react-router';
-import AppLayout from './components/shell/app-layout';
-import NoteDetails from './components/notes/note-details';
+import AppLayout from './pages/app-layout';
 import TasksLayout from './pages/tasks/tasks-layout';
 import NotesLayout from './pages/notes/notes-layout';
+import NoteDetails from './pages/notes/note-details';
 
 function App() {
   return (
