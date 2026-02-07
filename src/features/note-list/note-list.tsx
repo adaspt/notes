@@ -24,7 +24,7 @@ const notesQuery = (notesRepository: NotesRepository, folderId: number) => async
     .filter((_, i) => folderId != -1 || i < 10);
 };
 
-function NoteListSection() {
+function NoteList() {
   const isMobile = useIsMobile();
   const notesRepository = useNotesRepository();
 
@@ -64,4 +64,4 @@ function NoteListSection() {
   );
 }
 
-export default NoteListSection;
+export default NoteList;

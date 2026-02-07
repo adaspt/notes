@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router';
-import NoteListSection from '@/components/notes/NoteListSection';
+import NoteList from '@/features/note-list/note-list';
 
 function NotesLayout() {
   return (
     <>
-      <NoteListSection />
+      <NoteList />
       <main className="bg-background relative flex flex-col w-full flex-1 h-svh min-w-0">
         <Outlet />
       </main>
