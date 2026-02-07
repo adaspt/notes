@@ -21,6 +21,10 @@ export class TasksRepository {
     return this.#db.tasks.where('status').anyOf(statuses).toArray();
   }
 
+  getDirtyTasks() {
+    return this.#db.tasks.where('isDirty').equals(1).toArray();
+  }
+
   createTask(task: Task) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...rest } = task;

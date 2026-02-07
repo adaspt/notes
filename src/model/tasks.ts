@@ -49,3 +49,19 @@ export function updateTaskFromGraphTask(task: Partial<Task>, graphTask: TodoTask
     isDirty: 0
   };
 }
+
+export function updateGraphTaskFromTask(task: Task): TodoTask {
+  return {
+    id: task.graphId || '',
+    title: task.title,
+    importance: task.importance,
+    status: task.status,
+    startDateTime: task.startDateTime ? { dateTime: task.startDateTime, timeZone: 'UTC' } : undefined,
+    dueDateTime: task.dueDateTime ? { dateTime: task.dueDateTime, timeZone: 'UTC' } : undefined,
+    completedDateTime: task.completedDateTime ? { dateTime: task.completedDateTime, timeZone: 'UTC' } : undefined,
+    createdDateTime: task.createdDateTime,
+    lastModifiedDateTime: task.lastModifiedDateTime,
+    body: task.body ? { content: task.body, contentType: 'text' } : undefined
+    // checklistItems: task.checkListItems
+  };
+}

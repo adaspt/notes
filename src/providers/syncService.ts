@@ -1,5 +1,5 @@
 import type { DriveItem } from '@microsoft/microsoft-graph-types';
-import { updateTaskFromGraphTask } from '@/model/tasks';
+import { updateGraphTaskFromTask, updateTaskFromGraphTask } from '@/model/tasks';
 import type { DriveService } from './driveService';
 import type { TodoService } from './todoService';
 import type { NotesRepository } from './notesRepository';
@@ -125,14 +125,24 @@ export class SyncService {
   }
 
   async #pushTaskChanges() {
-    // const changes = await this.#tasksRepository.getDirtyTasks();
-    // for (const task of changes) {
-    //   if (task.isDeleted) {
-    //     if (task.graphId) {
-    //       await this.#todoService.deleteTask(task.graphId);
-    //     }
-    //   }
-    // }
+    const changes = await this.#tasksRepository.getDirtyTasks();
+    for (const task of changes) {
+      if (task.isDeleted) {
+        if (task.graphId) {
+          await this.#todoService.deleteTask(task.graphId);
+        }
+
+        await this.#tasksRepository.deleteTask(task.id);
+      } else {
+        if (task.graphId) {
+          await this.#todoService.updateTask(updateGraphTaskFromTask(task));
+          await this.#tasksRepository.updateTask({ ...task, isDirty: 0 });
+        } else {
+          const createdGraphTask = await this.#todoService.createTask(updateGraphTaskFromTask(task));
+          await this.#tasksRepository.updateTask({ ...task, graphId: createdGraphTask.id!, isDirty: 0 });
+        }
+      }
+    }
   }
 
   async #pullTaskChanges() {
