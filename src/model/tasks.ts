@@ -1,3 +1,4 @@
+import { dateTimeTimeZoneToLocalDate, localDateToDateTimeTimeZone } from '@/lib/dates';
 import type { TodoTask } from '@microsoft/microsoft-graph-types';
 
 export type TaskImportance = 'low' | 'normal' | 'high';
@@ -34,9 +35,9 @@ export function updateTaskFromGraphTask(task: Partial<Task>, graphTask: TodoTask
     title: graphTask.title!,
     importance: graphTask.importance || 'normal',
     status: graphTask.status || 'notStarted',
-    startDateTime: graphTask.startDateTime?.dateTime || null,
-    dueDateTime: graphTask.dueDateTime?.dateTime || null,
-    completedDateTime: graphTask.completedDateTime?.dateTime || null,
+    startDateTime: dateTimeTimeZoneToLocalDate(graphTask.startDateTime),
+    dueDateTime: dateTimeTimeZoneToLocalDate(graphTask.dueDateTime),
+    completedDateTime: dateTimeTimeZoneToLocalDate(graphTask.completedDateTime),
     createdDateTime: graphTask.createdDateTime!,
     lastModifiedDateTime: graphTask.lastModifiedDateTime!,
     body: graphTask.body?.content || null,
@@ -56,9 +57,9 @@ export function updateGraphTaskFromTask(task: Task): TodoTask {
     title: task.title,
     importance: task.importance,
     status: task.status,
-    startDateTime: task.startDateTime ? { dateTime: task.startDateTime, timeZone: 'UTC' } : undefined,
-    dueDateTime: task.dueDateTime ? { dateTime: task.dueDateTime, timeZone: 'UTC' } : undefined,
-    completedDateTime: task.completedDateTime ? { dateTime: task.completedDateTime, timeZone: 'UTC' } : undefined,
+    startDateTime: localDateToDateTimeTimeZone(task.startDateTime),
+    dueDateTime: localDateToDateTimeTimeZone(task.dueDateTime),
+    completedDateTime: localDateToDateTimeTimeZone(task.completedDateTime),
     createdDateTime: task.createdDateTime,
     lastModifiedDateTime: task.lastModifiedDateTime,
     body: task.body ? { content: task.body, contentType: 'text' } : undefined

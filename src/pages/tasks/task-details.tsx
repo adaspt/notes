@@ -13,37 +13,28 @@ import { Textarea } from '@/components/ui/textarea';
 const importanceOptions: TaskImportance[] = ['high', 'normal', 'low'];
 const statusOptions: TaskStatus[] = ['notStarted', 'inProgress', 'completed', 'waitingOnOthers', 'deferred'];
 
-const formatDateTimeLocal = (value: string | null) => {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-
-  const pad = (part: number) => String(part).padStart(2, '0');
-  const year = date.getFullYear();
-  const month = pad(date.getMonth() + 1);
-  const day = pad(date.getDate());
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
-};
-
-const parseDateTimeLocal = (value: string) => {
-  if (!value) return null;
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return null;
-
-  return parsed.toISOString();
-};
-
 const mapTaskToFormValues = (task: Task) => ({
   title: task.title,
   body: task.body ?? '',
   importance: task.importance,
   status: task.status,
-  startDateTime: formatDateTimeLocal(task.startDateTime),
-  dueDateTime: formatDateTimeLocal(task.dueDateTime)
+  startDateTime: task.startDateTime ?? '',
+  dueDateTime: task.dueDateTime ?? ''
 });
+
+const mapFormValuesToTask = (task: Task, value: ReturnType<typeof mapTaskToFormValues>): Task => {
+  return {
+    ...task,
+    title: value.title,
+    body: value.body || null,
+    importance: value.importance,
+    status: value.status,
+    startDateTime: value.startDateTime || null,
+    dueDateTime: value.dueDateTime || null,
+    lastModifiedDateTime: new Date().toISOString(),
+    isDirty: 1
+  };
+};
 
 interface Props {
   task: Task;
@@ -56,20 +47,8 @@ function TaskDetailsForm({ task }: Props) {
   const form = useForm({
     defaultValues: mapTaskToFormValues(task),
     onSubmit: async ({ value }) => {
-      await tasksRepository.updateTask({
-        ...task,
-        title: value.title,
-        body: value.body || null,
-        importance: value.importance,
-        status: value.status,
-        startDateTime: parseDateTimeLocal(value.startDateTime),
-        dueDateTime: parseDateTimeLocal(value.dueDateTime),
-        lastModifiedDateTime: new Date().toISOString(),
-        isDirty: 1
-      });
-
+      await tasksRepository.updateTask(mapFormValuesToTask(task, value));
       form.reset(value);
-
       syncScheduleService.requestSync();
     }
   });
@@ -178,7 +157,7 @@ function TaskDetailsForm({ task }: Props) {
                   <Label htmlFor={field.name}>Start</Label>
                   <Input
                     id={field.name}
-                    type="datetime-local"
+                    type="date"
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
@@ -193,7 +172,7 @@ function TaskDetailsForm({ task }: Props) {
                   <Label htmlFor={field.name}>Due</Label>
                   <Input
                     id={field.name}
-                    type="datetime-local"
+                    type="date"
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
