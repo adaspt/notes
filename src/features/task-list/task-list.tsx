@@ -66,7 +66,7 @@ function TaskList() {
       return 1;
     }
 
-    return new Date(a.createdDateTime).getTime() - new Date(b.createdDateTime).getTime();
+    return new Date(a.startDateTime || '9999-12-31').getTime() - new Date(b.startDateTime || '9999-12-31').getTime();
   });
 
   return (
@@ -80,12 +80,12 @@ function TaskList() {
           <Item key={task.id} variant="outline" className={cn({ 'bg-accent': task.id === Number(taskId) })} asChild>
             <Link to={`/${tasksFilter}/${task.id}`}>
               <ItemContent>
-                <ItemTitle>{task.title}</ItemTitle>
+                <ItemTitle>
+                  {task.title} {task.importance === 'high' ? '🔥' : ''}
+                </ItemTitle>
                 <ItemDescription>
-                  Start: {task.startDateTime ? new Date(task.startDateTime).toLocaleDateString() : 'No start date'},
-                  Due: {task.dueDateTime ? new Date(task.dueDateTime).toLocaleDateString() : 'No due date'}
-                  <br />
-                  Importance: {task.importance}
+                  Start: {task.startDateTime ? new Date(task.startDateTime).toLocaleDateString() : 'no start date'},
+                  Due: {task.dueDateTime ? new Date(task.dueDateTime).toLocaleDateString() : 'no due date'}
                 </ItemDescription>
               </ItemContent>
             </Link>

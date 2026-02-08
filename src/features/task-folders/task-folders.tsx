@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router';
+import { Calendar, Calendar1, CalendarDays } from 'lucide-react';
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -26,21 +27,21 @@ function TaskFolders() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={!folderId && taskFilter === 'today'}>
               <Link to="/today" onClick={handleFolderClick}>
-                Today
+                <Calendar1 /> Today
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={!folderId && taskFilter === 'later'}>
               <Link to="/later" onClick={handleFolderClick}>
-                Later
+                <CalendarDays /> Later
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={!folderId && taskFilter === 'backlog'}>
               <Link to="/backlog" onClick={handleFolderClick}>
-                Backlog
+                <Calendar /> Backlog
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
