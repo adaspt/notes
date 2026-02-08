@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -12,10 +13,10 @@ import {
 } from '../ui/dialog';
 import { SidebarGroup, SidebarGroupContent } from '../ui/sidebar';
 import CreateNoteForm from './create-note-form';
-import { useNavigate } from 'react-router';
 
 function CreateNoteGroup() {
   const navigate = useNavigate();
+  const { tasks = 'today' } = useParams();
 
   const [open, setOpen] = useState(false);
 
@@ -27,6 +28,9 @@ function CreateNoteGroup() {
   return (
     <SidebarGroup>
       <SidebarGroupContent>
+        <Button className="w-full mb-1" asChild>
+          <Link to={`/${tasks}/create`}>Create task</Link>
+        </Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="w-full">Create note</Button>
