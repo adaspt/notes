@@ -1,4 +1,5 @@
 import { useForm } from '@tanstack/react-form';
+import { formatDateLocal } from '@/lib/dates';
 import type { Task, TaskImportance, TaskStatus } from '@/model/tasks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,9 +36,10 @@ const mapFormValuesToTask = (task: Task, value: ReturnType<typeof mapTaskToFormV
 interface Props {
   task: Task;
   onSave: (task: Task) => Promise<void>;
+  onComplete?: (task: Task) => Promise<void>;
 }
 
-function TaskForm({ task, onSave }: Props) {
+function TaskForm({ task, onSave, onComplete }: Props) {
   const form = useForm({
     defaultValues: mapTaskToFormValues(task),
     onSubmit: async ({ value }) => {
@@ -59,9 +61,27 @@ function TaskForm({ task, onSave }: Props) {
         <form.Subscribe
           selector={(state) => [state.isDirty, state.isSubmitting]}
           children={([isDirty, isSubmitting]) => (
-            <Button type="submit" variant={isDirty ? 'destructive' : 'default'} disabled={!isDirty || isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save'}
-            </Button>
+            <>
+              {task.id > 0 && task.status !== 'completed' && onComplete && (
+                <Button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    const completedTask: Task = {
+                      ...mapFormValuesToTask(task, form.state.values),
+                      status: 'completed',
+                      completedDateTime: formatDateLocal(new Date().toISOString())
+                    };
+                    void onComplete(completedTask);
+                  }}
+                >
+                  Complete
+                </Button>
+              )}
+              <Button type="submit" variant={isDirty ? 'destructive' : 'default'} disabled={!isDirty || isSubmitting}>
+                {isSubmitting ? 'Saving...' : 'Save'}
+              </Button>
+            </>
           )}
         />
       </div>
