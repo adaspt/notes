@@ -98,44 +98,7 @@ function TaskForm({ task, onSave }: Props) {
             )}
           </form.Field>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <form.Field name="status">
-              {(field) => (
-                <div className="grid gap-2">
-                  <Label htmlFor={field.name}>Status</Label>
-                  <Select value={field.state.value} onValueChange={(event) => field.handleChange(event as TaskStatus)}>
-                    <SelectTrigger id={field.name} className="w-full">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusOptions.map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {status}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            </form.Field>
-
-            <form.Field name="startDateTime">
-              {(field) => (
-                <div className="grid gap-2">
-                  <Label htmlFor={field.name}>Start</Label>
-                  <Input
-                    id={field.name}
-                    type="date"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                  />
-                </div>
-              )}
-            </form.Field>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <form.Field name="importance">
               {(field) => (
                 <div className="grid gap-2">
@@ -151,6 +114,26 @@ function TaskForm({ task, onSave }: Props) {
                       {importanceOptions.map((importance) => (
                         <SelectItem key={importance} value={importance}>
                           {importance}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="status">
+              {(field) => (
+                <div className="grid gap-2">
+                  <Label htmlFor={field.name}>Status</Label>
+                  <Select value={field.state.value} onValueChange={(event) => field.handleChange(event as TaskStatus)}>
+                    <SelectTrigger id={field.name} className="w-full">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {statusOptions.map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status}
                         </SelectItem>
                       ))}
                     </SelectContent>
