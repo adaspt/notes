@@ -30,8 +30,8 @@ const byFolder = (filter: string) => {
     if (filter === 'later') {
       return (
         (task.status === 'notStarted' || task.status === 'inProgress' || task.status === 'waitingOnOthers') &&
-        task.startDateTime &&
-        new Date(task.startDateTime) > now
+        task.dueDateTime &&
+        new Date(task.dueDateTime) > now
       );
     }
 
@@ -41,7 +41,7 @@ const byFolder = (filter: string) => {
 
     return (
       (task.status === 'notStarted' || task.status === 'inProgress' || task.status === 'waitingOnOthers') &&
-      (!task.startDateTime || new Date(task.startDateTime) <= now)
+      (!task.dueDateTime || new Date(task.dueDateTime) <= now)
     );
   };
 };
@@ -67,7 +67,7 @@ function TaskList() {
       return 1;
     }
 
-    return new Date(a.startDateTime || '9999-12-31').getTime() - new Date(b.startDateTime || '9999-12-31').getTime();
+    return new Date(a.dueDateTime || '9999-12-31').getTime() - new Date(b.dueDateTime || '9999-12-31').getTime();
   });
 
   return (
