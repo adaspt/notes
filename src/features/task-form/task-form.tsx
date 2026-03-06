@@ -2,7 +2,12 @@ import { useForm } from '@tanstack/react-form';
 import { formatDateLocal } from '@/lib/dates';
 import type { Task, TaskImportance, TaskStatus } from '@/model/tasks';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -141,7 +146,7 @@ function TaskForm({ task, onSave, onComplete, onMove }: Props) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-              <Button type="submit" variant={isDirty ? 'destructive' : 'default'} disabled={!isDirty || isSubmitting}>
+              <Button type="submit" variant="destructive" disabled={!isDirty || isSubmitting}>
                 {isSubmitting ? 'Saving...' : 'Save'}
               </Button>
             </>
