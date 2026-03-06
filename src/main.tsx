@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
-import { createStandardPublicClientApplication } from '@azure/msal-browser';
+import { createStandardPublicClientApplication, EventType, type AuthenticationResult } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
 import { Client } from '@microsoft/microsoft-graph-client';
 import { BrowserRouter } from 'react-router';
@@ -21,6 +21,19 @@ const msal = await createStandardPublicClientApplication({
     authority: 'https://login.microsoftonline.com/consumers',
     redirectUri: window.location.origin
   }
+});
+
+msal.addEventCallback((event) => {
+  if (event.eventType === EventType.LOGIN_SUCCESS) {
+    const result = event.payload as AuthenticationResult | null;
+    if (result?.account) {
+      msal.setActiveAccount(result.account);
+    }
+  }
+});
+
+msal.ssoSilent({ scopes: ['https://graph.microsoft.com/.default'] }).catch((error) => {
+  console.warn('Silent SSO failed', error);
 });
 
 const graph = Client.init({
