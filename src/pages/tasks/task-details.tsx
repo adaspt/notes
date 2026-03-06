@@ -28,7 +28,13 @@ function TaskDetails() {
     navigate(`/${tasks || 'today'}`, { replace: true });
   };
 
-  return <TaskForm key={task.id} task={task} onSave={handleSave} onComplete={handleComplete} />;
+  const handleMove = async (updatedTask: Task) => {
+    await tasksRepository.updateTask(updatedTask);
+    syncScheduleService.requestSync();
+    navigate(`/${tasks || 'today'}`, { replace: true });
+  };
+
+  return <TaskForm key={task.id} task={task} onSave={handleSave} onComplete={handleComplete} onMove={handleMove} />;
 }
 
 export default TaskDetails;

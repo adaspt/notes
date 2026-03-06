@@ -2,6 +2,7 @@ import { useForm } from '@tanstack/react-form';
 import { formatDateLocal } from '@/lib/dates';
 import type { Task, TaskImportance, TaskStatus } from '@/model/tasks';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -37,9 +38,34 @@ interface Props {
   task: Task;
   onSave: (task: Task) => Promise<void>;
   onComplete?: (task: Task) => Promise<void>;
+  onMove?: (task: Task) => Promise<void>;
 }
 
-function TaskForm({ task, onSave, onComplete }: Props) {
+type MoveOption = 'today' | 'tomorrow' | 'nextWeek' | 'nextMonth' | 'backlog';
+
+const toLocalDate = (value: Date) => formatDateLocal(value.toISOString());
+
+const getDateForMoveOption = (option: Exclude<MoveOption, 'backlog'>) => {
+  const now = new Date();
+
+  if (option === 'today') {
+    return toLocalDate(now);
+  }
+
+  if (option === 'tomorrow') {
+    return toLocalDate(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1));
+  }
+
+  if (option === 'nextWeek') {
+    // Start of next calendar week (Monday).
+    const daysUntilNextMonday = now.getDay() === 0 ? 1 : 8 - now.getDay();
+    return toLocalDate(new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilNextMonday));
+  }
+
+  return toLocalDate(new Date(now.getFullYear(), now.getMonth() + 1, 1));
+};
+
+function TaskForm({ task, onSave, onComplete, onMove }: Props) {
   const form = useForm({
     defaultValues: mapTaskToFormValues(task),
     onSubmit: async ({ value }) => {
@@ -47,6 +73,27 @@ function TaskForm({ task, onSave, onComplete }: Props) {
       form.reset();
     }
   });
+
+  const handleMove = (option: MoveOption) => {
+    if (!onMove) {
+      return;
+    }
+
+    const taskToMove: Task = mapFormValuesToTask(task, form.state.values);
+
+    if (option === 'backlog') {
+      void onMove({
+        ...taskToMove,
+        status: 'deferred'
+      });
+      return;
+    }
+
+    void onMove({
+      ...taskToMove,
+      dueDateTime: getDateForMoveOption(option)
+    });
+  };
 
   return (
     <form
@@ -77,6 +124,22 @@ function TaskForm({ task, onSave, onComplete }: Props) {
                 >
                   Complete
                 </Button>
+              )}
+              {task.id > 0 && onMove && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button type="button" variant="secondary" disabled={isSubmitting}>
+                      Move
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => handleMove('today')}>Today</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleMove('tomorrow')}>Tomorrow</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleMove('nextWeek')}>Next week</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleMove('nextMonth')}>Next month</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleMove('backlog')}>Backlog</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
               <Button type="submit" variant={isDirty ? 'destructive' : 'default'} disabled={!isDirty || isSubmitting}>
                 {isSubmitting ? 'Saving...' : 'Save'}
