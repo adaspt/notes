@@ -32,7 +32,7 @@ function TaskCreate() {
   const handleSave = async (updatedTask: Task) => {
     const taskId = await tasksRepository.createTask(updatedTask);
     syncScheduleService.requestSync();
-    navigate(`/${tasks}/${taskId}`);
+    navigate(`/${tasks}/${taskId}`, { replace: true });
   };
 
   return <TaskForm task={task} onSave={handleSave} />;
