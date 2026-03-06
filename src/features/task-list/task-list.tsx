@@ -60,7 +60,7 @@ function TaskList() {
   );
 
   const activeTasks = tasks.filter(byFolder(tasksFilter)).toSorted((a, b) => {
-    if (a.importance !== b.importance) {
+    if (tasksFilter === 'today' && a.importance !== b.importance) {
       if (a.importance === 'high') return -1;
       if (b.importance === 'high') return 1;
       if (a.importance === 'normal') return -1;
