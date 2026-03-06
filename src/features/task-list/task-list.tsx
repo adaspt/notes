@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router';
+import { Link, useMatch, useParams } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { cn } from '@/lib/utils';
 import type { Task } from '@/model/tasks';
@@ -50,6 +50,7 @@ function TaskList() {
   const isMobile = useIsMobile();
   const tasksRepository = useTasksRepository();
 
+  const match = useMatch('/:tasks?');
   const { tasks: tasksFilter = 'today', taskId } = useParams();
 
   const tasks = useLiveQuery(
@@ -70,7 +71,7 @@ function TaskList() {
   });
 
   return (
-    <div className={cn('border-r w-md sm:w-xs max-w-dvw h-dvh flex flex-col', isMobile && taskId ? 'hidden' : '')}>
+    <div className={cn('border-r w-md sm:w-xs max-w-dvw h-dvh flex flex-col', isMobile && !match ? 'hidden' : '')}>
       <div className="border-b flex items-center p-2 gap-1">
         <SidebarTrigger />
         <span className="text-base font-medium">{getTitle(tasksFilter)}</span>
