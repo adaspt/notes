@@ -126,5 +126,5 @@
 }
 
 .milkdown .editor {
-  @apply px-4 py-2 sm:px-14 sm:py-4;
+  @apply py-2 sm:py-4;
 }

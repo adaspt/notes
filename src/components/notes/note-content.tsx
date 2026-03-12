@@ -4,8 +4,10 @@ import { MilkdownProvider } from '@milkdown/react';
 import type { Note } from '@/model/notes';
 import { useNotesRepository } from '@/providers/notesRepository';
 import { useSyncScheduleService } from '@/providers/syncScheduleService';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '../ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { Textarea } from '../ui/textarea';
 import NoteEditor from './note-editor';
 
 interface Props {
@@ -18,6 +20,8 @@ function NoteContent({ asyncNote }: Props) {
   if (note?.type !== 'file') {
     throw new Error('Can only open markdown notes');
   }
+
+  const isMobile = useIsMobile();
 
   const notesRepository = useNotesRepository();
   const syncScheduleService = useSyncScheduleService();
@@ -78,9 +82,17 @@ function NoteContent({ asyncNote }: Props) {
           Save
         </Button>
       </div>
-      <div className="flex-1 overflow-auto">
-        <NoteEditor defaultValue={defaultValue} onChange={setValue} />
-      </div>
+      {isMobile ? (
+        <Textarea
+          className="flex-1 border-0 focus-visible:ring-0 shadow-none"
+          defaultValue={defaultValue}
+          onChange={(e) => setValue(e.target.value)}
+        />
+      ) : (
+        <div className="flex-1 overflow-auto">
+          <NoteEditor defaultValue={defaultValue} onChange={setValue} />
+        </div>
+      )}
     </MilkdownProvider>
   );
 }
