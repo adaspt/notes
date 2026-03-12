@@ -7,7 +7,7 @@ function SignInButton() {
 
   const handleLogin = async () => {
     try {
-      await msal.instance.loginPopup({ scopes: ['https://graph.microsoft.com/.default'] });
+      await msal.instance.loginRedirect({ scopes: ['https://graph.microsoft.com/.default'] });
     } catch (error) {
       console.error('Login failed', error);
     }
