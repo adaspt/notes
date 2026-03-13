@@ -9,7 +9,15 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(import.meta.dirname, './src')
+    }
+  },
+  build: {
+    rolldownOptions: {
+      input: {
+        main: path.resolve(import.meta.dirname, 'index.html'),
+        redirect: path.resolve(import.meta.dirname, 'redirect.html')
+      }
     }
   },
   server: {

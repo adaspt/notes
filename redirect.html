@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Redirect</title>
+  </head>
+  <body>
+    <p>Processing authentication...</p>
+    <script type="module">
+      import { broadcastResponseToMainFrame } from '@azure/msal-browser/redirect-bridge';
+      broadcastResponseToMainFrame().catch(console.error);
+    </script>
+  </body>
+</html>

@@ -19,7 +19,7 @@ const msal = await createStandardPublicClientApplication({
   auth: {
     clientId: 'c0852a00-aa81-4963-a61d-a8a314dae18b',
     authority: 'https://login.microsoftonline.com/consumers',
-    redirectUri: window.location.origin
+    redirectUri: `${window.origin}/redirect.html`
   }
 });
 
