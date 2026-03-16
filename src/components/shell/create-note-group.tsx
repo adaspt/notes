@@ -23,7 +23,7 @@ function CreateNoteGroup() {
 
   const handleSaved = (folderId: number, id: number) => {
     setOpen(false);
-    navigate(`/${folderId}/${id}`);
+    navigate(`/notes/${folderId}/${id}`);
   };
 
   return (
