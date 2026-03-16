@@ -24,10 +24,56 @@ export class SyncService {
   #todoService: TodoService;
 
   async sync() {
-    await this.#pushNoteChanges();
-    await this.#pullNoteChanges();
     await this.#pushTaskChanges();
     await this.#pullTaskChanges();
+    await this.#pushNoteChanges();
+    await this.#pullNoteChanges();
+  }
+
+  async #pushTaskChanges() {
+    const changes = await this.#tasksRepository.getDirtyTasks();
+    for (const task of changes) {
+      if (task.isDeleted) {
+        if (task.graphId) {
+          await this.#todoService.deleteTask(task.graphId);
+        }
+
+        await this.#tasksRepository.deleteTask(task.id);
+      } else {
+        if (task.graphId) {
+          await this.#todoService.updateTask(updateGraphTaskFromTask(task));
+          await this.#tasksRepository.updateTask({ ...task, isDirty: 0 });
+        } else {
+          const createdGraphTask = await this.#todoService.createTask(updateGraphTaskFromTask(task));
+          await this.#tasksRepository.updateTask({ ...task, graphId: createdGraphTask.id!, isDirty: 0 });
+        }
+      }
+    }
+  }
+
+  async #pullTaskChanges() {
+    const graphTasks = await this.#todoService.getTasksDelta();
+    for (const graphTask of graphTasks.data) {
+      const task = await this.#tasksRepository.getByGraphId(graphTask.id!);
+      if ('@removed' in graphTask) {
+        if (task) {
+          if (graphTask['@removed'].reason === 'deleted') {
+            await this.#tasksRepository.deleteTask(task.id);
+          } else {
+            task.isDeleted = 1;
+            await this.#tasksRepository.updateTask(task);
+          }
+        }
+      } else {
+        if (!task) {
+          await this.#tasksRepository.createTask(updateTaskFromGraphTask({}, graphTask));
+        } else {
+          await this.#tasksRepository.updateTask(updateTaskFromGraphTask(task, graphTask));
+        }
+      }
+    }
+
+    this.#todoService.saveDeltaLink(graphTasks.deltaLink);
   }
 
   async #pushNoteChanges() {
@@ -122,51 +168,5 @@ export class SyncService {
     }
 
     this.#driveService.saveDriveDeltaLink(fileChanges.deltaLink);
-  }
-
-  async #pushTaskChanges() {
-    const changes = await this.#tasksRepository.getDirtyTasks();
-    for (const task of changes) {
-      if (task.isDeleted) {
-        if (task.graphId) {
-          await this.#todoService.deleteTask(task.graphId);
-        }
-
-        await this.#tasksRepository.deleteTask(task.id);
-      } else {
-        if (task.graphId) {
-          await this.#todoService.updateTask(updateGraphTaskFromTask(task));
-          await this.#tasksRepository.updateTask({ ...task, isDirty: 0 });
-        } else {
-          const createdGraphTask = await this.#todoService.createTask(updateGraphTaskFromTask(task));
-          await this.#tasksRepository.updateTask({ ...task, graphId: createdGraphTask.id!, isDirty: 0 });
-        }
-      }
-    }
-  }
-
-  async #pullTaskChanges() {
-    const graphTasks = await this.#todoService.getTasksDelta();
-    for (const graphTask of graphTasks.data) {
-      const task = await this.#tasksRepository.getByGraphId(graphTask.id!);
-      if ('@removed' in graphTask) {
-        if (task) {
-          if (graphTask['@removed'].reason === 'deleted') {
-            await this.#tasksRepository.deleteTask(task.id);
-          } else {
-            task.isDeleted = 1;
-            await this.#tasksRepository.updateTask(task);
-          }
-        }
-      } else {
-        if (!task) {
-          await this.#tasksRepository.createTask(updateTaskFromGraphTask({}, graphTask));
-        } else {
-          await this.#tasksRepository.updateTask(updateTaskFromGraphTask(task, graphTask));
-        }
-      }
-    }
-
-    this.#todoService.saveDeltaLink(graphTasks.deltaLink);
   }
 }
