@@ -11,7 +11,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '../ui/sidebar';
-import CreateNoteGroup from './create-note-group';
 import SyncSection from './sync/sync-section';
 
 function AppSidebar() {
@@ -33,7 +32,6 @@ function AppSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        <CreateNoteGroup />
       </SidebarHeader>
       <SidebarContent>
         <TaskFolders />
