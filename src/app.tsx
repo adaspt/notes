@@ -15,9 +15,11 @@ function App() {
           <Route path="create" element={<TaskCreate />} />
           <Route path=":taskId" element={<TaskDetails />} />
         </Route>
-        <Route path="notes/:folderId" element={<NotesLayout />}>
+        <Route path="notes" element={<NotesLayout />}>
           <Route index element={null} />
-          <Route path=":noteId" element={<NoteDetails />} />
+          <Route path=":folderId" element={null}>
+            <Route path=":noteId" element={<NoteDetails />} />
+          </Route>
         </Route>
       </Route>
     </Routes>
