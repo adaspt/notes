@@ -78,7 +78,7 @@ function TaskList() {
         <SidebarTrigger />
         <span className="text-base font-medium">{getTitle(tasksFilter)}</span>
       </div>
-      <ItemGroup className="min-h-0 overflow-y-auto gap-2 p-2">
+      <ItemGroup className="min-h-0 overflow-y-auto gap-2 p-2 grow">
         {activeTasks.map((task) => (
           <Item key={task.id} variant="outline" className={cn({ 'bg-accent': task.id === Number(taskId) })} asChild>
             <Link to={`/${tasksFilter}/${task.id}`}>
@@ -93,7 +93,7 @@ function TaskList() {
           </Item>
         ))}
         {!isLoadingTasks && activeTasks.length === 0 && (
-          <div className="flex flex-col items-center m-8">
+          <div className="flex flex-col items-center justify-center m-8 grow">
             <SquareCheckBigIcon className="text-muted-foreground/50" size={96} />
             <div className="text-sm text-muted-foreground">No tasks</div>
           </div>
