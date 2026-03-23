@@ -15,6 +15,12 @@ import { SyncScheduleService, SyncScheduleProvider } from './providers/syncSched
 import AppError from './components/shell/app-error';
 import App from './app';
 
+if ('serviceWorker' in navigator) {
+  void navigator.serviceWorker.register('/service-worker.js').catch((error) => {
+    console.warn('Service worker registration failed', error);
+  });
+}
+
 const msal = await createStandardPublicClientApplication({
   auth: {
     clientId: 'c0852a00-aa81-4963-a61d-a8a314dae18b',
@@ -32,9 +38,11 @@ msal.addEventCallback((event) => {
   }
 });
 
-msal.ssoSilent({ scopes: ['https://graph.microsoft.com/.default'] }).catch((error) => {
-  console.warn('Silent SSO failed', error);
-});
+if (navigator.onLine) {
+  msal.ssoSilent({ scopes: ['https://graph.microsoft.com/.default'] }).catch((error) => {
+    console.warn('Silent SSO failed', error);
+  });
+}
 
 const graph = Client.init({
   authProvider: (done) => {
