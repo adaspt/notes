@@ -39,7 +39,7 @@ jobs:
 
       - name: Build
         run: pnpm run build
-        with:
+        env:
           VITE_MICROSOFT_CLIENT_ID: ${{ secrets.VITE_MICROSOFT_CLIENT_ID }}
 
       - name: Install OIDC Client from Core Package
