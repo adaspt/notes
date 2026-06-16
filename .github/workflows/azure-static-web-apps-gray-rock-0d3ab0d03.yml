@@ -40,7 +40,7 @@ jobs:
       - name: Build
         run: pnpm run build
         with:
-          VITE_MICROSOFT_CLIENT_ID: ${{ VITE_MICROSOFT_CLIENT_ID }}
+          VITE_MICROSOFT_CLIENT_ID: ${{ secrets.VITE_MICROSOFT_CLIENT_ID }}
 
       - name: Install OIDC Client from Core Package
         run: pnpm add @actions/core@1.6.0 @actions/http-client
