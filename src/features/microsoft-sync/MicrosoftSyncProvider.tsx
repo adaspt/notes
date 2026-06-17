@@ -1,4 +1,8 @@
-import type { AccountInfo, PublicClientApplication } from "@azure/msal-browser";
+import {
+  InteractionRequiredAuthError,
+  type AccountInfo,
+  type IPublicClientApplication,
+} from "@azure/msal-browser";
 import { liveQuery } from "dexie";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
@@ -7,16 +11,18 @@ import { globalSyncStateId, localDatabase, type SyncStateRecord } from "@/lib/lo
 import { MicrosoftSyncContext, type MicrosoftSyncStatus } from "./microsoft-sync-context";
 import { markOffline, markSyncFailed, markSyncing } from "./sync-state";
 
-type MicrosoftSyncProviderProps = {
+interface MicrosoftSyncProviderProps {
+  msal: IPublicClientApplication;
   children: ReactNode;
-};
+}
+
+const microsoftGraphScopes = ["Tasks.ReadWrite", "Files.ReadWrite.AppFolder"];
 
 const pendingWriteSyncDebounceMs = 30_000;
 const periodicSyncIntervalMs = 60 * 60 * 1_000;
 const visibleSyncMinAgeMs = 60_000;
 
-function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
-  const [client, setClient] = useState<PublicClientApplication | null>(null);
+function MicrosoftSyncProvider({ msal, children }: MicrosoftSyncProviderProps) {
   const [account, setAccount] = useState<AccountInfo | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -98,29 +104,12 @@ function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
 
     async function initializeClient() {
       try {
-        const { initializeMicrosoftAuthSession } = await import("@/lib/microsoft");
-        const session = await initializeMicrosoftAuthSession();
-
-        if (!session) {
-          if (isMounted) {
-            setIsInitialized(true);
-            setMessage("Microsoft client ID is not configured.");
-          }
-          return;
-        }
-
         if (!isMounted) {
           return;
         }
 
-        setAccount(session.account);
-        setClient(session.client);
+        setAccount(msal.getActiveAccount());
         setIsInitialized(true);
-        setMessage(
-          session.account
-            ? null
-            : `No Microsoft account is cached. Cached accounts: ${session.accountCount}. Redirect response handled: ${session.redirectHandled ? "yes" : "no"}.`,
-        );
       } catch (error) {
         if (!isMounted) {
           return;
@@ -136,26 +125,18 @@ function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [msal]);
 
   const signIn = useCallback(async () => {
-    if (!client) {
-      setMessage("Microsoft client ID is not configured.");
-      return;
-    }
-
-    setMessage(null);
-
     try {
-      const { signInWithMicrosoft } = await import("@/lib/microsoft");
-      await signInWithMicrosoft(client);
+      await msal.loginRedirect({ scopes: microsoftGraphScopes });
     } catch (error) {
       setMessage(getErrorMessage(error));
     }
-  }, [client]);
+  }, [msal]);
 
   const syncNow = useCallback(async () => {
-    if (!client || !account) {
+    if (!account) {
       return;
     }
 
@@ -172,7 +153,7 @@ function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
     }
 
     const syncPromise = runMicrosoftSyncLoop(
-      client,
+      msal,
       account,
       setMessage,
       syncRequestedAfterCurrentRef,
@@ -184,10 +165,10 @@ function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
     } finally {
       syncPromiseRef.current = null;
     }
-  }, [account, client, isOnline]);
+  }, [account, msal, isOnline]);
 
   useEffect(() => {
-    if (!isInitialized || !client || !account) {
+    if (!isInitialized || !account) {
       return;
     }
 
@@ -203,18 +184,18 @@ function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
 
     startupSyncAccountIdRef.current = accountId;
     void syncNow();
-  }, [account, client, isInitialized, isOnline, syncNow]);
+  }, [account, isInitialized, isOnline, syncNow]);
 
   useEffect(() => {
-    if (!isInitialized || !client || !account || !isOnline || networkSyncRequest === 0) {
+    if (!isInitialized || !account || !isOnline || networkSyncRequest === 0) {
       return;
     }
 
     void syncNow();
-  }, [account, client, isInitialized, isOnline, networkSyncRequest, syncNow]);
+  }, [account, isInitialized, isOnline, networkSyncRequest, syncNow]);
 
   useEffect(() => {
-    if (!isInitialized || !client || !account || !isOnline || !pendingWriteVersion) {
+    if (!isInitialized || !account || !isOnline || !pendingWriteVersion) {
       return;
     }
 
@@ -225,10 +206,10 @@ function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
     return () => {
       globalThis.clearTimeout(syncTimer);
     };
-  }, [account, client, isInitialized, isOnline, pendingWriteVersion, syncNow]);
+  }, [account, isInitialized, isOnline, pendingWriteVersion, syncNow]);
 
   useEffect(() => {
-    if (!isInitialized || !client || !account || !isOnline) {
+    if (!isInitialized || !account || !isOnline) {
       return;
     }
 
@@ -239,14 +220,13 @@ function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
     return () => {
       globalThis.clearInterval(syncInterval);
     };
-  }, [account, client, isInitialized, isOnline, syncNow]);
+  }, [account, isInitialized, isOnline, syncNow]);
 
   useEffect(() => {
     function handleVisibilityChange() {
       if (
         globalThis.document.visibilityState !== "visible" ||
         !isInitialized ||
-        !client ||
         !account ||
         !isOnline ||
         !shouldSyncAfterVisible(syncState)
@@ -262,11 +242,11 @@ function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
     return () => {
       globalThis.document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [account, client, isInitialized, isOnline, syncNow, syncState]);
+  }, [account, isInitialized, isOnline, syncNow, syncState]);
 
   const status = useMemo(
-    () => getMicrosoftSyncStatus({ account, client, isInitialized, isOnline, syncState }),
-    [account, client, isInitialized, isOnline, syncState],
+    () => getMicrosoftSyncStatus({ account, client: msal, isInitialized, isOnline, syncState }),
+    [account, msal, isInitialized, isOnline, syncState],
   );
 
   const displayMessage = message ?? syncState?.message ?? null;
@@ -291,7 +271,7 @@ function MicrosoftSyncProvider({ children }: MicrosoftSyncProviderProps) {
 }
 
 async function runMicrosoftSync(
-  client: PublicClientApplication,
+  client: IPublicClientApplication,
   account: AccountInfo,
   setMessage: (message: string | null) => void,
 ) {
@@ -299,8 +279,7 @@ async function runMicrosoftSync(
   await markSyncing(localDatabase);
 
   try {
-    const { acquireMicrosoftGraphToken, createGraphClient, loadInitialMicrosoftData } =
-      await import("@/lib/microsoft");
+    const { createGraphClient, loadInitialMicrosoftData } = await import("@/lib/microsoft");
     const accessToken = await acquireMicrosoftGraphToken(client, account);
     await loadInitialMicrosoftData(createGraphClient(accessToken));
     setMessage(null);
@@ -311,8 +290,30 @@ async function runMicrosoftSync(
   }
 }
 
+async function acquireMicrosoftGraphToken(client: IPublicClientApplication, account: AccountInfo) {
+  try {
+    const result = await client.acquireTokenSilent({ account, scopes: microsoftGraphScopes });
+    return result.accessToken;
+  } catch (error) {
+    if (error instanceof InteractionRequiredAuthError) {
+      const result = await client.acquireTokenPopup({
+        account,
+        scopes: microsoftGraphScopes,
+      });
+
+      if (result.account) {
+        client.setActiveAccount(result.account);
+      }
+
+      return result.accessToken;
+    }
+
+    throw error;
+  }
+}
+
 async function runMicrosoftSyncLoop(
-  client: PublicClientApplication,
+  client: IPublicClientApplication,
   account: AccountInfo,
   setMessage: (message: string | null) => void,
   syncRequestedAfterCurrentRef: { current: boolean },
@@ -331,7 +332,7 @@ function getMicrosoftSyncStatus({
   syncState,
 }: {
   account: AccountInfo | null;
-  client: PublicClientApplication | null;
+  client: IPublicClientApplication | null;
   isInitialized: boolean;
   isOnline: boolean;
   syncState: SyncStateRecord | null;

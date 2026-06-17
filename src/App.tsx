@@ -1,14 +1,8 @@
+import { router } from "./router";
 import { RouterProvider } from "@tanstack/react-router";
 
-import MicrosoftSyncProvider from "./features/microsoft-sync/MicrosoftSyncProvider";
-import { router } from "./router";
-
 function App() {
-  return (
-    <MicrosoftSyncProvider>
-      <RouterProvider router={router} />
-    </MicrosoftSyncProvider>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

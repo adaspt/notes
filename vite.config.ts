@@ -148,6 +148,14 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  build: {
+    rolldownOptions: {
+      input: {
+        main: fileURLToPath(new URL("./index.html", import.meta.url)),
+        redirect: fileURLToPath(new URL("./redirect.html", import.meta.url)),
+      },
+    },
+  },
   plugins: [
     tanstackRouter({
       target: "react",
