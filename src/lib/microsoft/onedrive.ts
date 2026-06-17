@@ -1,21 +1,9 @@
-import { readPagedGraphCollectionWithDelta, type GraphClient } from "./graph-client";
+import { type GraphClient } from "./graph-client";
 import { graphDriveItemSchema, type GraphDriveItem } from "./graph-schemas";
 
 export async function getOneDriveAppRoot(client: Pick<GraphClient, "get">) {
   return client.get(
     "/me/drive/special/approot?$select=id,name,parentReference,lastModifiedDateTime",
-    graphDriveItemSchema,
-  );
-}
-
-export async function listDriveItemDelta(
-  client: Pick<GraphClient, "get">,
-  driveId: string,
-  driveItemId: string,
-) {
-  return readPagedGraphCollectionWithDelta(
-    client,
-    `/drives/${encodeURIComponent(driveId)}/items/${encodeURIComponent(driveItemId)}/delta?$select=id,name,parentReference,lastModifiedDateTime,file,folder,deleted`,
     graphDriveItemSchema,
   );
 }

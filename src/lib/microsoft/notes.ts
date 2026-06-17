@@ -72,7 +72,7 @@ export async function pushPendingNoteWrites(
   }
 }
 
-export async function upsertOneDriveNote(
+async function upsertOneDriveNote(
   client: Pick<GraphClient, "put">,
   database: NotesLocalDatabase,
   note: LocalNoteRecord,

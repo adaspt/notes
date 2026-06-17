@@ -11,7 +11,7 @@ import type {
   TaskDeltaCursorRecord,
 } from "./schemas";
 
-export const localDatabaseName = "notes-local";
+const localDatabaseName = "notes-local";
 
 export class NotesLocalDatabase extends Dexie {
   tasks!: Table<LocalTaskRecord, string>;

@@ -6,17 +6,15 @@ import {
   type Configuration,
 } from "@azure/msal-browser";
 
-export const microsoftGraphScopes = ["Tasks.ReadWrite", "Files.ReadWrite.AppFolder"] as const;
+const microsoftGraphScopes = ["Tasks.ReadWrite", "Files.ReadWrite.AppFolder"] as const;
 
-export type MicrosoftGraphScope = (typeof microsoftGraphScopes)[number];
-
-export type MicrosoftAuthEnvironment = {
+type MicrosoftAuthEnvironment = {
   clientId: string;
   authority?: string;
   redirectUri?: string;
 };
 
-export type MicrosoftAuthSession = {
+type MicrosoftAuthSession = {
   account: AccountInfo | null;
   accountCount: number;
   client: PublicClientApplication;
@@ -25,7 +23,7 @@ export type MicrosoftAuthSession = {
 
 let microsoftAuthSessionPromise: Promise<MicrosoftAuthSession | null> | null = null;
 
-export function createMicrosoftAuthConfig(environment: MicrosoftAuthEnvironment): Configuration {
+function createMicrosoftAuthConfig(environment: MicrosoftAuthEnvironment): Configuration {
   return {
     auth: {
       clientId: environment.clientId,
@@ -38,7 +36,7 @@ export function createMicrosoftAuthConfig(environment: MicrosoftAuthEnvironment)
   };
 }
 
-export function getMicrosoftAuthEnvironment(): MicrosoftAuthEnvironment | null {
+function getMicrosoftAuthEnvironment(): MicrosoftAuthEnvironment | null {
   const clientId = import.meta.env.VITE_MICROSOFT_CLIENT_ID;
   if (!clientId) {
     return null;
@@ -51,7 +49,7 @@ export function getMicrosoftAuthEnvironment(): MicrosoftAuthEnvironment | null {
   };
 }
 
-export function createMicrosoftAuthClient(environment = getMicrosoftAuthEnvironment()) {
+function createMicrosoftAuthClient(environment = getMicrosoftAuthEnvironment()) {
   if (!environment) {
     return null;
   }
@@ -64,7 +62,7 @@ export function initializeMicrosoftAuthSession() {
   return microsoftAuthSessionPromise;
 }
 
-export function getActiveMicrosoftAccount(client: PublicClientApplication): AccountInfo | null {
+function getActiveMicrosoftAccount(client: PublicClientApplication): AccountInfo | null {
   return client.getActiveAccount() ?? client.getAllAccounts()[0] ?? null;
 }
 

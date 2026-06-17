@@ -155,7 +155,7 @@ export async function readPagedGraphCollectionWithDelta<T>(
   return { items, deltaLink };
 }
 
-export function graphCollectionResponseSchema<T>(
+function graphCollectionResponseSchema<T>(
   itemSchema: z.ZodType<T>,
 ): z.ZodType<GraphCollectionResponse<T>> {
   return z.object({

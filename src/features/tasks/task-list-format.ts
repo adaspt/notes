@@ -52,7 +52,7 @@ export function isBacklogTask(task: LocalTaskRecord) {
   return task.status === "deferred";
 }
 
-export function compareTodayTasks(firstTask: LocalTaskRecord, secondTask: LocalTaskRecord) {
+function compareTodayTasks(firstTask: LocalTaskRecord, secondTask: LocalTaskRecord) {
   const priorityComparison = priorityRank[firstTask.priority] - priorityRank[secondTask.priority];
   if (priorityComparison !== 0) {
     return priorityComparison;
@@ -66,7 +66,7 @@ export function compareTodayTasks(firstTask: LocalTaskRecord, secondTask: LocalT
   return compareStableTaskIdentity(firstTask, secondTask);
 }
 
-export function compareLaterTasks(firstTask: LocalTaskRecord, secondTask: LocalTaskRecord) {
+function compareLaterTasks(firstTask: LocalTaskRecord, secondTask: LocalTaskRecord) {
   const dueDateComparison = compareRequiredDueDates(firstTask.dueDate, secondTask.dueDate);
   if (dueDateComparison !== 0) {
     return dueDateComparison;
@@ -80,7 +80,7 @@ export function compareLaterTasks(firstTask: LocalTaskRecord, secondTask: LocalT
   return compareStableTaskIdentity(firstTask, secondTask);
 }
 
-export function compareBacklogTasks(firstTask: LocalTaskRecord, secondTask: LocalTaskRecord) {
+function compareBacklogTasks(firstTask: LocalTaskRecord, secondTask: LocalTaskRecord) {
   const priorityComparison = priorityRank[firstTask.priority] - priorityRank[secondTask.priority];
   if (priorityComparison !== 0) {
     return priorityComparison;
@@ -94,7 +94,7 @@ export function compareBacklogTasks(firstTask: LocalTaskRecord, secondTask: Loca
   return compareStableTaskIdentity(firstTask, secondTask);
 }
 
-export function toTaskListItem(today = getLocalDateKey()) {
+function toTaskListItem(today = getLocalDateKey()) {
   return (task: LocalTaskRecord): TaskListItem => ({
     id: task.id,
     title: task.title,

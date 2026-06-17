@@ -12,7 +12,7 @@ export async function createUniqueTaskId(database: NotesLocalDatabase) {
   }
 }
 
-export function createRandomTaskId() {
+function createRandomTaskId() {
   const values = new Uint8Array(localTaskIdLength);
   crypto.getRandomValues(values);
 

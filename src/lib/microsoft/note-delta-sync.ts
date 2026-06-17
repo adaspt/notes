@@ -331,7 +331,7 @@ async function moveDescendantPaths(
   );
 }
 
-export function parseNoteFileContent(
+function parseNoteFileContent(
   rawContent: string,
   fallbackType: NoteType,
 ): { content: string; frontmatter: NoteFrontmatter } {

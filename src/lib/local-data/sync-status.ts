@@ -1,7 +1,5 @@
 import { globalSyncStateId, type SyncStateRecord, type SyncStatus } from "./schemas";
 
-export const initialSyncStatus: SyncStatus = "offline";
-
 export function createSyncStateRecord(
   status: SyncStatus,
   updatedAt: string,

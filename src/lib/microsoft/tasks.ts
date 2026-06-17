@@ -3,7 +3,7 @@ import type { LocalTaskRecord, NotesLocalDatabase, TaskStatus } from "@/lib/loca
 import { readPagedGraphCollection, type GraphClient } from "./graph-client";
 import { graphTodoTaskListSchema, graphTodoTaskSchema, type GraphTodoTask } from "./graph-schemas";
 
-export async function listTodoTaskLists(client: Pick<GraphClient, "get">) {
+async function listTodoTaskLists(client: Pick<GraphClient, "get">) {
   return readPagedGraphCollection(client, "/me/todo/lists", graphTodoTaskListSchema);
 }
 
@@ -63,7 +63,7 @@ export async function pushPendingTaskWrites(
   }
 }
 
-export async function upsertTodoTask(
+async function upsertTodoTask(
   client: Pick<GraphClient, "patch" | "post">,
   taskListId: string,
   task: LocalTaskRecord,
@@ -105,7 +105,7 @@ export function normalizeTodoTask(
   };
 }
 
-export function toGraphTodoTaskPayload(task: LocalTaskRecord) {
+function toGraphTodoTaskPayload(task: LocalTaskRecord) {
   return {
     title: task.title,
     body: {

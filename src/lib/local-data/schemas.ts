@@ -3,8 +3,8 @@ import { z } from "zod";
 const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const isoDateTimeSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/);
 
-export const taskPrioritySchema = z.enum(["high", "normal", "low"]);
-export const taskStatusSchema = z.enum(["notStarted", "completed", "deferred"]);
+const taskPrioritySchema = z.enum(["high", "normal", "low"]);
+const taskStatusSchema = z.enum(["notStarted", "completed", "deferred"]);
 
 export const localTaskRecordSchema = z.object({
   id: z.string().min(1),
@@ -18,14 +18,14 @@ export const localTaskRecordSchema = z.object({
   updatedAt: isoDateTimeSchema,
 });
 
-export const noteTypeSchema = z.enum(["markdown", "list"]);
+const noteTypeSchema = z.enum(["markdown", "list"]);
 
-export const noteFrontmatterSchema = z.object({
+const noteFrontmatterSchema = z.object({
   type: noteTypeSchema,
   starred: z.boolean(),
 });
 
-export const localProjectRecordSchema = z.object({
+const localProjectRecordSchema = z.object({
   id: z.string().min(1),
   driveItemId: z.string().min(1),
   name: z.string().min(1),
@@ -54,14 +54,14 @@ export const pendingTaskWriteSchema = z.object({
   updatedAt: isoDateTimeSchema,
 });
 
-export const pendingNoteUpsertWriteSchema = z.object({
+const pendingNoteUpsertWriteSchema = z.object({
   noteId: z.string().min(1),
   operation: z.literal("upsert"),
   note: localNoteRecordSchema,
   updatedAt: isoDateTimeSchema,
 });
 
-export const pendingNoteDeleteWriteSchema = z.object({
+const pendingNoteDeleteWriteSchema = z.object({
   noteId: z.string().min(1),
   operation: z.literal("delete"),
   driveItemId: z.string().min(1).nullable(),
@@ -69,18 +69,12 @@ export const pendingNoteDeleteWriteSchema = z.object({
   updatedAt: isoDateTimeSchema,
 });
 
-export const pendingNoteWriteSchema = z.discriminatedUnion("operation", [
+const pendingNoteWriteSchema = z.discriminatedUnion("operation", [
   pendingNoteUpsertWriteSchema,
   pendingNoteDeleteWriteSchema,
 ]);
 
-export const syncStatusSchema = z.enum([
-  "synced",
-  "syncing",
-  "offline",
-  "offlineChanges",
-  "syncFailed",
-]);
+const syncStatusSchema = z.enum(["synced", "syncing", "offline", "offlineChanges", "syncFailed"]);
 
 export const globalSyncStateId = "global" as const;
 export const defaultTaskDeltaCursorId = "default-task-list" as const;
@@ -94,14 +88,14 @@ export const syncStateRecordSchema = z.object({
   updatedAt: isoDateTimeSchema,
 });
 
-export const taskDeltaCursorRecordSchema = z.object({
+const taskDeltaCursorRecordSchema = z.object({
   id: z.literal(defaultTaskDeltaCursorId),
   listId: z.string().min(1),
   deltaLink: z.string().url().nullable(),
   updatedAt: isoDateTimeSchema,
 });
 
-export const noteDeltaCursorRecordSchema = z.object({
+const noteDeltaCursorRecordSchema = z.object({
   id: z.literal(defaultNoteDeltaCursorId),
   appRootDriveItemId: z.string().min(1),
   driveId: z.string().min(1),

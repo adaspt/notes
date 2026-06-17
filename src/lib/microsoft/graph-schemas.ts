@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const graphDateTimeTimeZoneSchema = z.object({
+const graphDateTimeTimeZoneSchema = z.object({
   dateTime: z.string(),
   timeZone: z.string().optional(),
 });

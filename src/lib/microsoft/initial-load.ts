@@ -14,7 +14,7 @@ import { pushPendingNoteWrites } from "./notes";
 import { syncTodoTasksWithDelta } from "./task-delta-sync";
 import { discoverDefaultTodoTaskList, pushPendingTaskWrites } from "./tasks";
 
-export type InitialMicrosoftLoadResult = {
+type InitialMicrosoftLoadResult = {
   defaultTaskList: GraphTodoTaskList;
   tasks: LocalTaskRecord[];
   projects: LocalProjectRecord[];
