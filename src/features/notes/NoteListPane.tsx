@@ -36,7 +36,7 @@ function NoteListPane({
           )}
         </header>
       )}
-      <div className="min-h-0 flex-1 overflow-y-scroll [scrollbar-gutter:stable]">
+      <div className="min-h-0 flex-1 overflow-y-auto">
         {items.length > 0 ? (
           <ul className="divide-y">
             {items.map((note) => (
