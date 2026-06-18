@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Archive, CalendarClock, Folder, Inbox, ListTodo, Star } from "lucide-react";
-
-import MicrosoftSyncControls from "@/features/microsoft-sync/MicrosoftSyncControls";
+import CloudSyncControls from "@/features/cloud-sync/CloudSyncControls";
 import { useProjects } from "@/features/notes/use-projects";
 import { useTodayTasks } from "@/features/tasks/use-today-tasks";
 import { cn } from "@/lib/utils";
@@ -123,7 +122,7 @@ function NavigationPane() {
         </ul>
       </section>
 
-      <MicrosoftSyncControls />
+      <CloudSyncControls />
     </nav>
   );
 }

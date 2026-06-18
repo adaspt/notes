@@ -4,7 +4,6 @@ import { afterEach, describe, expect, it } from "vite-plus/test";
 
 import {
   createLocalDatabase,
-  createSyncStateRecord,
   type LocalNoteRecord,
   type LocalProjectRecord,
 } from "@/lib/local-data";
@@ -62,11 +61,6 @@ function createProjectRecord(overrides: Partial<LocalProjectRecord> = {}): Local
 describe("note mutations", () => {
   it("creates an inbox markdown note and queues it for sync", async () => {
     const database = createTestDatabase();
-    await database.syncStates.put(
-      createSyncStateRecord("synced", "2026-06-15T10:00:00.000Z", {
-        lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      }),
-    );
 
     const note = await createNote({ name: "Inbox note" }, { database, now });
 
@@ -86,10 +80,6 @@ describe("note mutations", () => {
       operation: "upsert",
       note,
       updatedAt: nowIso,
-    });
-    await expect(database.syncStates.get("global")).resolves.toMatchObject({
-      lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      status: "offlineChanges",
     });
   });
 
@@ -150,11 +140,6 @@ describe("note mutations", () => {
   it("edits note content and queues the latest note for sync", async () => {
     const database = createTestDatabase();
     await database.notes.put(createNoteRecord());
-    await database.syncStates.put(
-      createSyncStateRecord("synced", "2026-06-15T10:00:00.000Z", {
-        lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      }),
-    );
 
     await editNoteContent("note-1", "# Updated\n\nBody text.", { database, now });
 
@@ -170,10 +155,6 @@ describe("note mutations", () => {
       },
       updatedAt: nowIso,
     });
-    await expect(database.syncStates.get("global")).resolves.toMatchObject({
-      lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      status: "offlineChanges",
-    });
   });
 
   it("rejects missing notes without queueing a write", async () => {
@@ -188,11 +169,6 @@ describe("note mutations", () => {
   it("updates note starred state and queues the latest note for sync", async () => {
     const database = createTestDatabase();
     await database.notes.put(createNoteRecord());
-    await database.syncStates.put(
-      createSyncStateRecord("synced", "2026-06-15T10:00:00.000Z", {
-        lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      }),
-    );
 
     await setNoteStarred("note-1", true, { database, now });
 
@@ -208,10 +184,6 @@ describe("note mutations", () => {
       },
       updatedAt: nowIso,
     });
-    await expect(database.syncStates.get("global")).resolves.toMatchObject({
-      lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      status: "offlineChanges",
-    });
   });
 
   it("rejects missing note starred updates without queueing a write", async () => {
@@ -226,11 +198,6 @@ describe("note mutations", () => {
   it("deletes a note locally and queues its drive item for sync", async () => {
     const database = createTestDatabase();
     await database.notes.put(createNoteRecord());
-    await database.syncStates.put(
-      createSyncStateRecord("synced", "2026-06-15T10:00:00.000Z", {
-        lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      }),
-    );
 
     await deleteNote("note-1", { database, now });
 
@@ -241,10 +208,6 @@ describe("note mutations", () => {
       driveItemId: "note-1",
       note: null,
       updatedAt: nowIso,
-    });
-    await expect(database.syncStates.get("global")).resolves.toMatchObject({
-      lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      status: "offlineChanges",
     });
   });
 

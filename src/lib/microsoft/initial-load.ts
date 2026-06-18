@@ -1,5 +1,4 @@
 import {
-  createSyncStateRecord,
   localDatabase,
   type LocalNoteRecord,
   type LocalProjectRecord,
@@ -33,12 +32,6 @@ export async function loadInitialMicrosoftData(
     syncTodoTasksWithDelta(client, defaultTaskList.id, database, updatedAt),
     syncNotesWithDelta(client, database, updatedAt),
   ]);
-
-  await database.transaction("rw", database.syncStates, async () => {
-    await database.syncStates.put(
-      createSyncStateRecord("synced", updatedAt, { lastSyncedAt: updatedAt }),
-    );
-  });
 
   return {
     defaultTaskList,

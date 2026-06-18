@@ -74,19 +74,8 @@ const pendingNoteWriteSchema = z.discriminatedUnion("operation", [
   pendingNoteDeleteWriteSchema,
 ]);
 
-const syncStatusSchema = z.enum(["synced", "syncing", "offline", "offlineChanges", "syncFailed"]);
-
-export const globalSyncStateId = "global" as const;
 export const defaultTaskDeltaCursorId = "default-task-list" as const;
 export const defaultNoteDeltaCursorId = "app-root-notes" as const;
-
-export const syncStateRecordSchema = z.object({
-  id: z.literal(globalSyncStateId),
-  status: syncStatusSchema,
-  message: z.string().nullable(),
-  lastSyncedAt: isoDateTimeSchema.nullable(),
-  updatedAt: isoDateTimeSchema,
-});
 
 const taskDeltaCursorRecordSchema = z.object({
   id: z.literal(defaultTaskDeltaCursorId),
@@ -112,7 +101,5 @@ export type LocalProjectRecord = z.infer<typeof localProjectRecordSchema>;
 export type LocalNoteRecord = z.infer<typeof localNoteRecordSchema>;
 export type PendingTaskWrite = z.infer<typeof pendingTaskWriteSchema>;
 export type PendingNoteWrite = z.infer<typeof pendingNoteWriteSchema>;
-export type SyncStatus = z.infer<typeof syncStatusSchema>;
-export type SyncStateRecord = z.infer<typeof syncStateRecordSchema>;
 export type TaskDeltaCursorRecord = z.infer<typeof taskDeltaCursorRecordSchema>;
 export type NoteDeltaCursorRecord = z.infer<typeof noteDeltaCursorRecordSchema>;

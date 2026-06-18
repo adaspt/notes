@@ -1,5 +1,4 @@
 import {
-  createSyncStateRecord,
   localDatabase,
   type LocalNoteRecord,
   type LocalProjectRecord,
@@ -29,7 +28,6 @@ export async function createNote(values: NoteCreateValues, options: NoteMutation
     database.notes,
     database.pendingNoteWrites,
     database.projects,
-    database.syncStates,
     async () => {
       const project = projectId ? await getRequiredProject(database, projectId) : null;
       const path = createNotePath(name, project);
@@ -59,8 +57,6 @@ export async function createNote(values: NoteCreateValues, options: NoteMutation
         updatedAt,
       });
 
-      await markOfflineChanges(database, updatedAt);
-
       return note;
     },
   );
@@ -75,36 +71,28 @@ export async function editNoteContent(
   const now = options.now ?? new Date();
   const updatedAt = now.toISOString();
 
-  return database.transaction(
-    "rw",
-    database.notes,
-    database.pendingNoteWrites,
-    database.syncStates,
-    async () => {
-      const note = await database.notes.get(noteId);
-      if (!note) {
-        throw new Error("Note not found.");
-      }
+  return database.transaction("rw", database.notes, database.pendingNoteWrites, async () => {
+    const note = await database.notes.get(noteId);
+    if (!note) {
+      throw new Error("Note not found.");
+    }
 
-      const updatedNote: LocalNoteRecord = {
-        ...note,
-        content,
-        updatedAt,
-      };
+    const updatedNote: LocalNoteRecord = {
+      ...note,
+      content,
+      updatedAt,
+    };
 
-      await database.notes.put(updatedNote);
-      await database.pendingNoteWrites.put({
-        noteId,
-        operation: "upsert",
-        note: updatedNote,
-        updatedAt,
-      });
+    await database.notes.put(updatedNote);
+    await database.pendingNoteWrites.put({
+      noteId,
+      operation: "upsert",
+      note: updatedNote,
+      updatedAt,
+    });
 
-      await markOfflineChanges(database, updatedAt);
-
-      return updatedNote;
-    },
-  );
+    return updatedNote;
+  });
 }
 
 export async function setNoteStarred(
@@ -116,36 +104,28 @@ export async function setNoteStarred(
   const now = options.now ?? new Date();
   const updatedAt = now.toISOString();
 
-  return database.transaction(
-    "rw",
-    database.notes,
-    database.pendingNoteWrites,
-    database.syncStates,
-    async () => {
-      const note = await database.notes.get(noteId);
-      if (!note) {
-        throw new Error("Note not found.");
-      }
+  return database.transaction("rw", database.notes, database.pendingNoteWrites, async () => {
+    const note = await database.notes.get(noteId);
+    if (!note) {
+      throw new Error("Note not found.");
+    }
 
-      const updatedNote: LocalNoteRecord = {
-        ...note,
-        starred,
-        updatedAt,
-      };
+    const updatedNote: LocalNoteRecord = {
+      ...note,
+      starred,
+      updatedAt,
+    };
 
-      await database.notes.put(updatedNote);
-      await database.pendingNoteWrites.put({
-        noteId,
-        operation: "upsert",
-        note: updatedNote,
-        updatedAt,
-      });
+    await database.notes.put(updatedNote);
+    await database.pendingNoteWrites.put({
+      noteId,
+      operation: "upsert",
+      note: updatedNote,
+      updatedAt,
+    });
 
-      await markOfflineChanges(database, updatedAt);
-
-      return updatedNote;
-    },
-  );
+    return updatedNote;
+  });
 }
 
 export async function deleteNote(noteId: string, options: NoteMutationOptions = {}) {
@@ -153,29 +133,21 @@ export async function deleteNote(noteId: string, options: NoteMutationOptions = 
   const now = options.now ?? new Date();
   const updatedAt = now.toISOString();
 
-  return database.transaction(
-    "rw",
-    database.notes,
-    database.pendingNoteWrites,
-    database.syncStates,
-    async () => {
-      const note = await database.notes.get(noteId);
-      if (!note) {
-        throw new Error("Note not found.");
-      }
+  return database.transaction("rw", database.notes, database.pendingNoteWrites, async () => {
+    const note = await database.notes.get(noteId);
+    if (!note) {
+      throw new Error("Note not found.");
+    }
 
-      await database.notes.delete(noteId);
-      await database.pendingNoteWrites.put({
-        noteId,
-        operation: "delete",
-        driveItemId: note.driveItemId,
-        note: null,
-        updatedAt,
-      });
-
-      await markOfflineChanges(database, updatedAt);
-    },
-  );
+    await database.notes.delete(noteId);
+    await database.pendingNoteWrites.put({
+      noteId,
+      operation: "delete",
+      driveItemId: note.driveItemId,
+      note: null,
+      updatedAt,
+    });
+  });
 }
 
 function createMarkdownNoteFileName(input: string) {
@@ -225,13 +197,4 @@ function createNotePath(name: string, project: LocalProjectRecord | null) {
   }
 
   return `${project.path}/${name}`;
-}
-
-async function markOfflineChanges(database: NotesLocalDatabase, updatedAt: string) {
-  const existingSyncState = await database.syncStates.get("global");
-  await database.syncStates.put(
-    createSyncStateRecord("offlineChanges", updatedAt, {
-      lastSyncedAt: existingSyncState?.lastSyncedAt ?? null,
-    }),
-  );
 }

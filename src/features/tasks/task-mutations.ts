@@ -1,5 +1,4 @@
 import {
-  createSyncStateRecord,
   createUniqueTaskId,
   localDatabase,
   type LocalTaskRecord,
@@ -34,42 +33,29 @@ export async function createTask(values: TaskCreateValues, options: TaskMutation
     throw new Error("Task title is required.");
   }
 
-  return database.transaction(
-    "rw",
-    database.tasks,
-    database.pendingTaskWrites,
-    database.syncStates,
-    async () => {
-      const task: LocalTaskRecord = {
-        id: taskId,
-        remoteId: null,
-        title,
-        body: values.body ?? "",
-        dueDate: values.dueDate ?? null,
-        priority: values.priority ?? "normal",
-        status: values.status ?? "notStarted",
-        remoteUpdatedAt: null,
-        updatedAt,
-      };
+  return database.transaction("rw", database.tasks, database.pendingTaskWrites, async () => {
+    const task: LocalTaskRecord = {
+      id: taskId,
+      remoteId: null,
+      title,
+      body: values.body ?? "",
+      dueDate: values.dueDate ?? null,
+      priority: values.priority ?? "normal",
+      status: values.status ?? "notStarted",
+      remoteUpdatedAt: null,
+      updatedAt,
+    };
 
-      await database.tasks.put(task);
-      await database.pendingTaskWrites.put({
-        taskId,
-        operation: "upsert",
-        task,
-        updatedAt,
-      });
+    await database.tasks.put(task);
+    await database.pendingTaskWrites.put({
+      taskId,
+      operation: "upsert",
+      task,
+      updatedAt,
+    });
 
-      const existingSyncState = await database.syncStates.get("global");
-      await database.syncStates.put(
-        createSyncStateRecord("offlineChanges", updatedAt, {
-          lastSyncedAt: existingSyncState?.lastSyncedAt ?? null,
-        }),
-      );
-
-      return task;
-    },
-  );
+    return task;
+  });
 }
 
 export async function completeTask(taskId: string, options: TaskMutationOptions = {}) {
@@ -155,41 +141,28 @@ async function updateTask(
   const now = options.now ?? new Date();
   const updatedAt = now.toISOString();
 
-  return database.transaction(
-    "rw",
-    database.tasks,
-    database.pendingTaskWrites,
-    database.syncStates,
-    async () => {
-      const task = await database.tasks.get(taskId);
-      if (!task) {
-        throw new Error("Task not found.");
-      }
+  return database.transaction("rw", database.tasks, database.pendingTaskWrites, async () => {
+    const task = await database.tasks.get(taskId);
+    if (!task) {
+      throw new Error("Task not found.");
+    }
 
-      const updatedTask: LocalTaskRecord = {
-        ...task,
-        ...createPatch(now),
-        updatedAt,
-      };
+    const updatedTask: LocalTaskRecord = {
+      ...task,
+      ...createPatch(now),
+      updatedAt,
+    };
 
-      await database.tasks.put(updatedTask);
-      await database.pendingTaskWrites.put({
-        taskId,
-        operation: "upsert",
-        task: updatedTask,
-        updatedAt,
-      });
+    await database.tasks.put(updatedTask);
+    await database.pendingTaskWrites.put({
+      taskId,
+      operation: "upsert",
+      task: updatedTask,
+      updatedAt,
+    });
 
-      const existingSyncState = await database.syncStates.get("global");
-      await database.syncStates.put(
-        createSyncStateRecord("offlineChanges", updatedAt, {
-          lastSyncedAt: existingSyncState?.lastSyncedAt ?? null,
-        }),
-      );
-
-      return updatedTask;
-    },
-  );
+    return updatedTask;
+  });
 }
 
 function getShiftedDateKey(date: Date, days: number) {

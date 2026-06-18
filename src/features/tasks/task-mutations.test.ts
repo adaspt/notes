@@ -2,7 +2,7 @@ import "fake-indexeddb/auto";
 
 import { afterEach, describe, expect, it } from "vite-plus/test";
 
-import { createLocalDatabase, createSyncStateRecord, type LocalTaskRecord } from "@/lib/local-data";
+import { createLocalDatabase, type LocalTaskRecord } from "@/lib/local-data";
 
 import {
   completeTask,
@@ -65,11 +65,6 @@ describe("task mutation date helpers", () => {
 describe("task mutations", () => {
   it("creates a local task and queues it for sync", async () => {
     const database = createTestDatabase();
-    await database.syncStates.put(
-      createSyncStateRecord("synced", "2026-06-15T10:00:00.000Z", {
-        lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      }),
-    );
 
     const task = await createTask(
       {
@@ -95,10 +90,6 @@ describe("task mutations", () => {
       operation: "upsert",
       task,
       updatedAt: nowIso,
-    });
-    await expect(database.syncStates.get("global")).resolves.toMatchObject({
-      lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      status: "offlineChanges",
     });
   });
 
@@ -127,9 +118,6 @@ describe("task mutations", () => {
       task: {
         status: "completed",
       },
-    });
-    await expect(database.syncStates.get("global")).resolves.toMatchObject({
-      status: "offlineChanges",
     });
   });
 
@@ -170,20 +158,11 @@ describe("task mutations", () => {
   it("defers tasks to backlog without losing the last synced timestamp", async () => {
     const database = createTestDatabase();
     await database.tasks.put(createTaskRecord());
-    await database.syncStates.put(
-      createSyncStateRecord("synced", "2026-06-15T10:00:00.000Z", {
-        lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      }),
-    );
 
     await deferTaskToBacklog("task-1", { database, now });
 
     await expect(database.tasks.get("task-1")).resolves.toMatchObject({
       status: "deferred",
-    });
-    await expect(database.syncStates.get("global")).resolves.toMatchObject({
-      lastSyncedAt: "2026-06-15T10:00:00.000Z",
-      status: "offlineChanges",
     });
   });
 

@@ -4,12 +4,9 @@ import { afterEach, describe, expect, it } from "vite-plus/test";
 
 import { createLocalDatabase } from "./database";
 import {
-  createSyncStateRecord,
-  globalSyncStateId,
   localNoteRecordSchema,
   localTaskRecordSchema,
   pendingTaskWriteSchema,
-  syncStateRecordSchema,
   type LocalNoteRecord,
   type LocalTaskRecord,
 } from "./index";
@@ -104,14 +101,5 @@ describe("local IndexedDB schema", () => {
     await database.notes.put(note);
 
     await expect(database.notes.get(note.id)).resolves.toEqual(note);
-  });
-
-  it("creates the singleton global sync status record", async () => {
-    const database = createTestDatabase();
-    const syncState = syncStateRecordSchema.parse(createSyncStateRecord("offlineChanges", now));
-
-    await database.syncStates.put(syncState);
-
-    await expect(database.syncStates.get(globalSyncStateId)).resolves.toEqual(syncState);
   });
 });

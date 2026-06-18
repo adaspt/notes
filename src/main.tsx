@@ -1,15 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  createStandardPublicClientApplication,
-  EventType,
-  type AccountInfo,
-} from "@azure/msal-browser";
-import MicrosoftSyncProvider from "./features/microsoft-sync/MicrosoftSyncProvider";
+import { PublicClientApplication } from "@azure/msal-browser";
+import AuthProvider from "@/lib/auth/AuthProvider.tsx";
+import { CloudSyncEngine } from "@/features/cloud-sync/cloud-sync-engine.ts";
+import CloudSyncProvider from "@/features/cloud-sync/CloudSyncProvider.tsx";
 import "./index.css";
 import App from "./App.tsx";
 
-const msal = await createStandardPublicClientApplication({
+const graphScopes = ["Tasks.ReadWrite", "Files.ReadWrite.AppFolder"];
+
+const msal = new PublicClientApplication({
   auth: {
     clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID,
     authority: "https://login.microsoftonline.com/consumers",
@@ -20,24 +20,14 @@ const msal = await createStandardPublicClientApplication({
   },
 });
 
-await msal.handleRedirectPromise();
-
-const accounts = msal.getAllAccounts();
-if (accounts.length > 0) {
-  msal.setActiveAccount(accounts[0]);
-}
-
-msal.addEventCallback((event) => {
-  if (event.eventType === EventType.LOGIN_SUCCESS) {
-    const result = event.payload as AccountInfo;
-    msal.setActiveAccount(result);
-  }
-});
+const syncEngine = new CloudSyncEngine(msal, graphScopes);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <MicrosoftSyncProvider msal={msal}>
-      <App />
-    </MicrosoftSyncProvider>
+    <AuthProvider msal={msal} scopes={graphScopes}>
+      <CloudSyncProvider syncEngine={syncEngine}>
+        <App />
+      </CloudSyncProvider>
+    </AuthProvider>
   </StrictMode>,
 );

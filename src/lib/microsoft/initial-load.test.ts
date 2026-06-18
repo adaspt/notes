@@ -83,9 +83,6 @@ describe("loadInitialMicrosoftData", () => {
       starred: true,
       type: "list",
     });
-    await expect(database.syncStates.get("global")).resolves.toMatchObject({
-      status: "synced",
-    });
   });
 
   it("pushes pending task writes before pulling fresh task data", async () => {

@@ -7,7 +7,6 @@ import type {
   LocalTaskRecord,
   PendingNoteWrite,
   PendingTaskWrite,
-  SyncStateRecord,
   TaskDeltaCursorRecord,
 } from "./schemas";
 
@@ -19,7 +18,6 @@ export class NotesLocalDatabase extends Dexie {
   projects!: Table<LocalProjectRecord, string>;
   pendingTaskWrites!: Table<PendingTaskWrite, string>;
   pendingNoteWrites!: Table<PendingNoteWrite, string>;
-  syncStates!: Table<SyncStateRecord, string>;
   taskDeltaCursors!: Table<TaskDeltaCursorRecord, string>;
   noteDeltaCursors!: Table<NoteDeltaCursorRecord, string>;
 
@@ -32,7 +30,6 @@ export class NotesLocalDatabase extends Dexie {
       projects: "&id, driveItemId, name, path, updatedAt",
       pendingTaskWrites: "&taskId, operation, updatedAt",
       pendingNoteWrites: "&noteId, operation, updatedAt",
-      syncStates: "&id, status, updatedAt",
       taskDeltaCursors: "&id, listId, updatedAt",
       noteDeltaCursors: "&id, appRootDriveItemId, driveId, updatedAt",
     });
