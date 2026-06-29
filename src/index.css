@@ -1,49 +1,54 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
+  --font-heading: var(--font-sans);
+  --font-sans: "Inter Variable", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-  --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -62,11 +67,12 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -96,11 +102,11 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -115,77 +121,89 @@
   * {
     @apply border-border outline-ring/50;
   }
-
   body {
     @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }
 
 @layer components {
-  .prose-note-editor {
-    overflow-wrap: anywhere;
+  .note-editor-content {
+    line-height: 1.65;
   }
 
-  .prose-note-editor p {
-    margin-block: 0.75rem;
+  .note-editor-content h1 {
+    @apply mt-5 mb-3 text-2xl font-semibold;
   }
 
-  .prose-note-editor h1 {
-    margin-block: 1.25rem 0.75rem;
-    font-size: 1.875rem;
-    font-weight: 650;
-    line-height: 2.25rem;
+  .note-editor-content h2 {
+    @apply mt-4 mb-2 text-xl font-semibold;
   }
 
-  .prose-note-editor h2 {
-    margin-block: 1.125rem 0.625rem;
-    font-size: 1.5rem;
-    font-weight: 650;
-    line-height: 2rem;
+  .note-editor-content p {
+    @apply my-2;
   }
 
-  .prose-note-editor ul,
-  .prose-note-editor ol {
-    margin-block: 0.75rem;
-    padding-inline-start: 1.5rem;
+  .note-editor-content ul,
+  .note-editor-content ol {
+    @apply my-2 pl-6;
   }
 
-  .prose-note-editor ul {
-    list-style: disc;
+  .note-editor-content ul {
+    @apply list-disc;
   }
 
-  .prose-note-editor ol {
-    list-style: decimal;
+  .note-editor-content ol {
+    @apply list-decimal;
   }
 
-  .prose-note-editor li {
-    margin-block: 0.25rem;
+  .note-editor-content blockquote {
+    @apply my-3 border-l-2 pl-3 text-muted-foreground;
   }
 
-  .prose-note-editor blockquote {
-    margin-block: 0.75rem;
-    border-left: 3px solid var(--border);
-    padding-inline-start: 1rem;
-    color: var(--muted-foreground);
+  .note-editor-content code {
+    @apply rounded-sm bg-muted px-1 py-0.5 font-mono text-[0.9em];
   }
 
-  .prose-note-editor code {
-    border-radius: 0.25rem;
-    background: var(--muted);
-    padding: 0.125rem 0.25rem;
-    font-size: 0.875em;
+  .note-editor-content pre {
+    @apply my-3 overflow-auto rounded-md bg-muted p-3;
   }
 
-  .prose-note-editor pre {
-    margin-block: 0.75rem;
-    overflow-x: auto;
-    border-radius: 0.375rem;
-    background: var(--muted);
-    padding: 1rem;
+  .note-editor-content pre code {
+    @apply bg-transparent p-0;
   }
 
-  .prose-note-editor pre code {
-    background: transparent;
-    padding: 0;
+  .note-editor-content hr {
+    @apply my-4 border-border;
+  }
+
+  .note-editor-content a {
+    @apply underline underline-offset-2;
+  }
+
+  .note-editor-content ul[data-type="taskList"] {
+    @apply list-none pl-0;
+  }
+
+  .note-editor-content ul[data-type="taskList"] li {
+    @apply my-1 grid grid-cols-[1.25rem_minmax(0,1fr)] items-start gap-2;
+  }
+
+  .note-editor-content ul[data-type="taskList"] label {
+    @apply flex h-[1.65em] items-center justify-center;
+  }
+
+  .note-editor-content ul[data-type="taskList"] label input {
+    @apply m-0 size-4;
+  }
+
+  .note-editor-content ul[data-type="taskList"] li > div {
+    @apply min-w-0;
+  }
+
+  .note-editor-content ul[data-type="taskList"] li > div > p {
+    @apply my-0;
   }
 }

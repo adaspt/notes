@@ -10,49 +10,28 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as NotesStarredRouteImport } from './routes/notes/starred'
-import { Route as NotesInboxRouteImport } from './routes/notes/inbox'
-import { Route as NotesProjectIdRouteImport } from './routes/notes/$projectId'
 import { Route as TasksTodayRouteImport } from './routes/_tasks/today'
 import { Route as TasksLaterRouteImport } from './routes/_tasks/later'
 import { Route as TasksBacklogRouteImport } from './routes/_tasks/backlog'
-import { Route as NotesStarredIndexRouteImport } from './routes/notes/starred.index'
-import { Route as NotesInboxIndexRouteImport } from './routes/notes/inbox.index'
-import { Route as NotesProjectIdIndexRouteImport } from './routes/notes/$projectId.index'
+import { Route as NotesStarredRouteImport } from './routes/_notes/starred'
+import { Route as NotesInboxRouteImport } from './routes/_notes/inbox'
 import { Route as TasksTodayIndexRouteImport } from './routes/_tasks/today.index'
 import { Route as TasksLaterIndexRouteImport } from './routes/_tasks/later.index'
 import { Route as TasksBacklogIndexRouteImport } from './routes/_tasks/backlog.index'
-import { Route as NotesStarredCreateRouteImport } from './routes/notes/starred.create'
-import { Route as NotesStarredNoteIdRouteImport } from './routes/notes/starred.$noteId'
-import { Route as NotesInboxCreateRouteImport } from './routes/notes/inbox.create'
-import { Route as NotesInboxNoteIdRouteImport } from './routes/notes/inbox.$noteId'
-import { Route as NotesProjectIdCreateRouteImport } from './routes/notes/$projectId.create'
-import { Route as NotesProjectIdNoteIdRouteImport } from './routes/notes/$projectId.$noteId'
-import { Route as TasksTodayCreateRouteImport } from './routes/_tasks/today.create'
+import { Route as NotesStarredIndexRouteImport } from './routes/_notes/starred.index'
+import { Route as NotesInboxIndexRouteImport } from './routes/_notes/inbox.index'
 import { Route as TasksTodayTaskIdRouteImport } from './routes/_tasks/today.$taskId'
-import { Route as TasksLaterCreateRouteImport } from './routes/_tasks/later.create'
 import { Route as TasksLaterTaskIdRouteImport } from './routes/_tasks/later.$taskId'
-import { Route as TasksBacklogCreateRouteImport } from './routes/_tasks/backlog.create'
 import { Route as TasksBacklogTaskIdRouteImport } from './routes/_tasks/backlog.$taskId'
+import { Route as NotesStarredNoteIdRouteImport } from './routes/_notes/starred.$noteId'
+import { Route as NotesProjectsProjectIdRouteImport } from './routes/_notes/projects.$projectId'
+import { Route as NotesInboxNoteIdRouteImport } from './routes/_notes/inbox.$noteId'
+import { Route as NotesProjectsProjectIdIndexRouteImport } from './routes/_notes/projects.$projectId.index'
+import { Route as NotesProjectsProjectIdNoteIdRouteImport } from './routes/_notes/projects.$projectId.$noteId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotesStarredRoute = NotesStarredRouteImport.update({
-  id: '/notes/starred',
-  path: '/notes/starred',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotesInboxRoute = NotesInboxRouteImport.update({
-  id: '/notes/inbox',
-  path: '/notes/inbox',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotesProjectIdRoute = NotesProjectIdRouteImport.update({
-  id: '/notes/$projectId',
-  path: '/notes/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TasksTodayRoute = TasksTodayRouteImport.update({
@@ -70,20 +49,15 @@ const TasksBacklogRoute = TasksBacklogRouteImport.update({
   path: '/backlog',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NotesStarredIndexRoute = NotesStarredIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NotesStarredRoute,
+const NotesStarredRoute = NotesStarredRouteImport.update({
+  id: '/_notes/starred',
+  path: '/starred',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const NotesInboxIndexRoute = NotesInboxIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NotesInboxRoute,
-} as any)
-const NotesProjectIdIndexRoute = NotesProjectIdIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NotesProjectIdRoute,
+const NotesInboxRoute = NotesInboxRouteImport.update({
+  id: '/_notes/inbox',
+  path: '/inbox',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TasksTodayIndexRoute = TasksTodayIndexRouteImport.update({
   id: '/',
@@ -100,229 +74,185 @@ const TasksBacklogIndexRoute = TasksBacklogIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TasksBacklogRoute,
 } as any)
-const NotesStarredCreateRoute = NotesStarredCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
+const NotesStarredIndexRoute = NotesStarredIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => NotesStarredRoute,
 } as any)
-const NotesStarredNoteIdRoute = NotesStarredNoteIdRouteImport.update({
-  id: '/$noteId',
-  path: '/$noteId',
-  getParentRoute: () => NotesStarredRoute,
-} as any)
-const NotesInboxCreateRoute = NotesInboxCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
+const NotesInboxIndexRoute = NotesInboxIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => NotesInboxRoute,
-} as any)
-const NotesInboxNoteIdRoute = NotesInboxNoteIdRouteImport.update({
-  id: '/$noteId',
-  path: '/$noteId',
-  getParentRoute: () => NotesInboxRoute,
-} as any)
-const NotesProjectIdCreateRoute = NotesProjectIdCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => NotesProjectIdRoute,
-} as any)
-const NotesProjectIdNoteIdRoute = NotesProjectIdNoteIdRouteImport.update({
-  id: '/$noteId',
-  path: '/$noteId',
-  getParentRoute: () => NotesProjectIdRoute,
-} as any)
-const TasksTodayCreateRoute = TasksTodayCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => TasksTodayRoute,
 } as any)
 const TasksTodayTaskIdRoute = TasksTodayTaskIdRouteImport.update({
   id: '/$taskId',
   path: '/$taskId',
   getParentRoute: () => TasksTodayRoute,
 } as any)
-const TasksLaterCreateRoute = TasksLaterCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => TasksLaterRoute,
-} as any)
 const TasksLaterTaskIdRoute = TasksLaterTaskIdRouteImport.update({
   id: '/$taskId',
   path: '/$taskId',
   getParentRoute: () => TasksLaterRoute,
-} as any)
-const TasksBacklogCreateRoute = TasksBacklogCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => TasksBacklogRoute,
 } as any)
 const TasksBacklogTaskIdRoute = TasksBacklogTaskIdRouteImport.update({
   id: '/$taskId',
   path: '/$taskId',
   getParentRoute: () => TasksBacklogRoute,
 } as any)
+const NotesStarredNoteIdRoute = NotesStarredNoteIdRouteImport.update({
+  id: '/$noteId',
+  path: '/$noteId',
+  getParentRoute: () => NotesStarredRoute,
+} as any)
+const NotesProjectsProjectIdRoute = NotesProjectsProjectIdRouteImport.update({
+  id: '/_notes/projects/$projectId',
+  path: '/projects/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotesInboxNoteIdRoute = NotesInboxNoteIdRouteImport.update({
+  id: '/$noteId',
+  path: '/$noteId',
+  getParentRoute: () => NotesInboxRoute,
+} as any)
+const NotesProjectsProjectIdIndexRoute =
+  NotesProjectsProjectIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => NotesProjectsProjectIdRoute,
+  } as any)
+const NotesProjectsProjectIdNoteIdRoute =
+  NotesProjectsProjectIdNoteIdRouteImport.update({
+    id: '/$noteId',
+    path: '/$noteId',
+    getParentRoute: () => NotesProjectsProjectIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/inbox': typeof NotesInboxRouteWithChildren
+  '/starred': typeof NotesStarredRouteWithChildren
   '/backlog': typeof TasksBacklogRouteWithChildren
   '/later': typeof TasksLaterRouteWithChildren
   '/today': typeof TasksTodayRouteWithChildren
-  '/notes/$projectId': typeof NotesProjectIdRouteWithChildren
-  '/notes/inbox': typeof NotesInboxRouteWithChildren
-  '/notes/starred': typeof NotesStarredRouteWithChildren
+  '/inbox/$noteId': typeof NotesInboxNoteIdRoute
+  '/projects/$projectId': typeof NotesProjectsProjectIdRouteWithChildren
+  '/starred/$noteId': typeof NotesStarredNoteIdRoute
   '/backlog/$taskId': typeof TasksBacklogTaskIdRoute
-  '/backlog/create': typeof TasksBacklogCreateRoute
   '/later/$taskId': typeof TasksLaterTaskIdRoute
-  '/later/create': typeof TasksLaterCreateRoute
   '/today/$taskId': typeof TasksTodayTaskIdRoute
-  '/today/create': typeof TasksTodayCreateRoute
-  '/notes/$projectId/$noteId': typeof NotesProjectIdNoteIdRoute
-  '/notes/$projectId/create': typeof NotesProjectIdCreateRoute
-  '/notes/inbox/$noteId': typeof NotesInboxNoteIdRoute
-  '/notes/inbox/create': typeof NotesInboxCreateRoute
-  '/notes/starred/$noteId': typeof NotesStarredNoteIdRoute
-  '/notes/starred/create': typeof NotesStarredCreateRoute
+  '/inbox/': typeof NotesInboxIndexRoute
+  '/starred/': typeof NotesStarredIndexRoute
   '/backlog/': typeof TasksBacklogIndexRoute
   '/later/': typeof TasksLaterIndexRoute
   '/today/': typeof TasksTodayIndexRoute
-  '/notes/$projectId/': typeof NotesProjectIdIndexRoute
-  '/notes/inbox/': typeof NotesInboxIndexRoute
-  '/notes/starred/': typeof NotesStarredIndexRoute
+  '/projects/$projectId/$noteId': typeof NotesProjectsProjectIdNoteIdRoute
+  '/projects/$projectId/': typeof NotesProjectsProjectIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/inbox/$noteId': typeof NotesInboxNoteIdRoute
+  '/starred/$noteId': typeof NotesStarredNoteIdRoute
   '/backlog/$taskId': typeof TasksBacklogTaskIdRoute
-  '/backlog/create': typeof TasksBacklogCreateRoute
   '/later/$taskId': typeof TasksLaterTaskIdRoute
-  '/later/create': typeof TasksLaterCreateRoute
   '/today/$taskId': typeof TasksTodayTaskIdRoute
-  '/today/create': typeof TasksTodayCreateRoute
-  '/notes/$projectId/$noteId': typeof NotesProjectIdNoteIdRoute
-  '/notes/$projectId/create': typeof NotesProjectIdCreateRoute
-  '/notes/inbox/$noteId': typeof NotesInboxNoteIdRoute
-  '/notes/inbox/create': typeof NotesInboxCreateRoute
-  '/notes/starred/$noteId': typeof NotesStarredNoteIdRoute
-  '/notes/starred/create': typeof NotesStarredCreateRoute
+  '/inbox': typeof NotesInboxIndexRoute
+  '/starred': typeof NotesStarredIndexRoute
   '/backlog': typeof TasksBacklogIndexRoute
   '/later': typeof TasksLaterIndexRoute
   '/today': typeof TasksTodayIndexRoute
-  '/notes/$projectId': typeof NotesProjectIdIndexRoute
-  '/notes/inbox': typeof NotesInboxIndexRoute
-  '/notes/starred': typeof NotesStarredIndexRoute
+  '/projects/$projectId/$noteId': typeof NotesProjectsProjectIdNoteIdRoute
+  '/projects/$projectId': typeof NotesProjectsProjectIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_notes/inbox': typeof NotesInboxRouteWithChildren
+  '/_notes/starred': typeof NotesStarredRouteWithChildren
   '/_tasks/backlog': typeof TasksBacklogRouteWithChildren
   '/_tasks/later': typeof TasksLaterRouteWithChildren
   '/_tasks/today': typeof TasksTodayRouteWithChildren
-  '/notes/$projectId': typeof NotesProjectIdRouteWithChildren
-  '/notes/inbox': typeof NotesInboxRouteWithChildren
-  '/notes/starred': typeof NotesStarredRouteWithChildren
+  '/_notes/inbox/$noteId': typeof NotesInboxNoteIdRoute
+  '/_notes/projects/$projectId': typeof NotesProjectsProjectIdRouteWithChildren
+  '/_notes/starred/$noteId': typeof NotesStarredNoteIdRoute
   '/_tasks/backlog/$taskId': typeof TasksBacklogTaskIdRoute
-  '/_tasks/backlog/create': typeof TasksBacklogCreateRoute
   '/_tasks/later/$taskId': typeof TasksLaterTaskIdRoute
-  '/_tasks/later/create': typeof TasksLaterCreateRoute
   '/_tasks/today/$taskId': typeof TasksTodayTaskIdRoute
-  '/_tasks/today/create': typeof TasksTodayCreateRoute
-  '/notes/$projectId/$noteId': typeof NotesProjectIdNoteIdRoute
-  '/notes/$projectId/create': typeof NotesProjectIdCreateRoute
-  '/notes/inbox/$noteId': typeof NotesInboxNoteIdRoute
-  '/notes/inbox/create': typeof NotesInboxCreateRoute
-  '/notes/starred/$noteId': typeof NotesStarredNoteIdRoute
-  '/notes/starred/create': typeof NotesStarredCreateRoute
+  '/_notes/inbox/': typeof NotesInboxIndexRoute
+  '/_notes/starred/': typeof NotesStarredIndexRoute
   '/_tasks/backlog/': typeof TasksBacklogIndexRoute
   '/_tasks/later/': typeof TasksLaterIndexRoute
   '/_tasks/today/': typeof TasksTodayIndexRoute
-  '/notes/$projectId/': typeof NotesProjectIdIndexRoute
-  '/notes/inbox/': typeof NotesInboxIndexRoute
-  '/notes/starred/': typeof NotesStarredIndexRoute
+  '/_notes/projects/$projectId/$noteId': typeof NotesProjectsProjectIdNoteIdRoute
+  '/_notes/projects/$projectId/': typeof NotesProjectsProjectIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/inbox'
+    | '/starred'
     | '/backlog'
     | '/later'
     | '/today'
-    | '/notes/$projectId'
-    | '/notes/inbox'
-    | '/notes/starred'
+    | '/inbox/$noteId'
+    | '/projects/$projectId'
+    | '/starred/$noteId'
     | '/backlog/$taskId'
-    | '/backlog/create'
     | '/later/$taskId'
-    | '/later/create'
     | '/today/$taskId'
-    | '/today/create'
-    | '/notes/$projectId/$noteId'
-    | '/notes/$projectId/create'
-    | '/notes/inbox/$noteId'
-    | '/notes/inbox/create'
-    | '/notes/starred/$noteId'
-    | '/notes/starred/create'
+    | '/inbox/'
+    | '/starred/'
     | '/backlog/'
     | '/later/'
     | '/today/'
-    | '/notes/$projectId/'
-    | '/notes/inbox/'
-    | '/notes/starred/'
+    | '/projects/$projectId/$noteId'
+    | '/projects/$projectId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/inbox/$noteId'
+    | '/starred/$noteId'
     | '/backlog/$taskId'
-    | '/backlog/create'
     | '/later/$taskId'
-    | '/later/create'
     | '/today/$taskId'
-    | '/today/create'
-    | '/notes/$projectId/$noteId'
-    | '/notes/$projectId/create'
-    | '/notes/inbox/$noteId'
-    | '/notes/inbox/create'
-    | '/notes/starred/$noteId'
-    | '/notes/starred/create'
+    | '/inbox'
+    | '/starred'
     | '/backlog'
     | '/later'
     | '/today'
-    | '/notes/$projectId'
-    | '/notes/inbox'
-    | '/notes/starred'
+    | '/projects/$projectId/$noteId'
+    | '/projects/$projectId'
   id:
     | '__root__'
     | '/'
+    | '/_notes/inbox'
+    | '/_notes/starred'
     | '/_tasks/backlog'
     | '/_tasks/later'
     | '/_tasks/today'
-    | '/notes/$projectId'
-    | '/notes/inbox'
-    | '/notes/starred'
+    | '/_notes/inbox/$noteId'
+    | '/_notes/projects/$projectId'
+    | '/_notes/starred/$noteId'
     | '/_tasks/backlog/$taskId'
-    | '/_tasks/backlog/create'
     | '/_tasks/later/$taskId'
-    | '/_tasks/later/create'
     | '/_tasks/today/$taskId'
-    | '/_tasks/today/create'
-    | '/notes/$projectId/$noteId'
-    | '/notes/$projectId/create'
-    | '/notes/inbox/$noteId'
-    | '/notes/inbox/create'
-    | '/notes/starred/$noteId'
-    | '/notes/starred/create'
+    | '/_notes/inbox/'
+    | '/_notes/starred/'
     | '/_tasks/backlog/'
     | '/_tasks/later/'
     | '/_tasks/today/'
-    | '/notes/$projectId/'
-    | '/notes/inbox/'
-    | '/notes/starred/'
+    | '/_notes/projects/$projectId/$noteId'
+    | '/_notes/projects/$projectId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  NotesInboxRoute: typeof NotesInboxRouteWithChildren
+  NotesStarredRoute: typeof NotesStarredRouteWithChildren
   TasksBacklogRoute: typeof TasksBacklogRouteWithChildren
   TasksLaterRoute: typeof TasksLaterRouteWithChildren
   TasksTodayRoute: typeof TasksTodayRouteWithChildren
-  NotesProjectIdRoute: typeof NotesProjectIdRouteWithChildren
-  NotesInboxRoute: typeof NotesInboxRouteWithChildren
-  NotesStarredRoute: typeof NotesStarredRouteWithChildren
+  NotesProjectsProjectIdRoute: typeof NotesProjectsProjectIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -332,27 +262,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notes/starred': {
-      id: '/notes/starred'
-      path: '/notes/starred'
-      fullPath: '/notes/starred'
-      preLoaderRoute: typeof NotesStarredRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notes/inbox': {
-      id: '/notes/inbox'
-      path: '/notes/inbox'
-      fullPath: '/notes/inbox'
-      preLoaderRoute: typeof NotesInboxRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notes/$projectId': {
-      id: '/notes/$projectId'
-      path: '/notes/$projectId'
-      fullPath: '/notes/$projectId'
-      preLoaderRoute: typeof NotesProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_tasks/today': {
@@ -376,26 +285,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksBacklogRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/notes/starred/': {
-      id: '/notes/starred/'
-      path: '/'
-      fullPath: '/notes/starred/'
-      preLoaderRoute: typeof NotesStarredIndexRouteImport
-      parentRoute: typeof NotesStarredRoute
+    '/_notes/starred': {
+      id: '/_notes/starred'
+      path: '/starred'
+      fullPath: '/starred'
+      preLoaderRoute: typeof NotesStarredRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/notes/inbox/': {
-      id: '/notes/inbox/'
-      path: '/'
-      fullPath: '/notes/inbox/'
-      preLoaderRoute: typeof NotesInboxIndexRouteImport
-      parentRoute: typeof NotesInboxRoute
-    }
-    '/notes/$projectId/': {
-      id: '/notes/$projectId/'
-      path: '/'
-      fullPath: '/notes/$projectId/'
-      preLoaderRoute: typeof NotesProjectIdIndexRouteImport
-      parentRoute: typeof NotesProjectIdRoute
+    '/_notes/inbox': {
+      id: '/_notes/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof NotesInboxRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_tasks/today/': {
       id: '/_tasks/today/'
@@ -418,54 +320,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksBacklogIndexRouteImport
       parentRoute: typeof TasksBacklogRoute
     }
-    '/notes/starred/create': {
-      id: '/notes/starred/create'
-      path: '/create'
-      fullPath: '/notes/starred/create'
-      preLoaderRoute: typeof NotesStarredCreateRouteImport
+    '/_notes/starred/': {
+      id: '/_notes/starred/'
+      path: '/'
+      fullPath: '/starred/'
+      preLoaderRoute: typeof NotesStarredIndexRouteImport
       parentRoute: typeof NotesStarredRoute
     }
-    '/notes/starred/$noteId': {
-      id: '/notes/starred/$noteId'
-      path: '/$noteId'
-      fullPath: '/notes/starred/$noteId'
-      preLoaderRoute: typeof NotesStarredNoteIdRouteImport
-      parentRoute: typeof NotesStarredRoute
-    }
-    '/notes/inbox/create': {
-      id: '/notes/inbox/create'
-      path: '/create'
-      fullPath: '/notes/inbox/create'
-      preLoaderRoute: typeof NotesInboxCreateRouteImport
+    '/_notes/inbox/': {
+      id: '/_notes/inbox/'
+      path: '/'
+      fullPath: '/inbox/'
+      preLoaderRoute: typeof NotesInboxIndexRouteImport
       parentRoute: typeof NotesInboxRoute
-    }
-    '/notes/inbox/$noteId': {
-      id: '/notes/inbox/$noteId'
-      path: '/$noteId'
-      fullPath: '/notes/inbox/$noteId'
-      preLoaderRoute: typeof NotesInboxNoteIdRouteImport
-      parentRoute: typeof NotesInboxRoute
-    }
-    '/notes/$projectId/create': {
-      id: '/notes/$projectId/create'
-      path: '/create'
-      fullPath: '/notes/$projectId/create'
-      preLoaderRoute: typeof NotesProjectIdCreateRouteImport
-      parentRoute: typeof NotesProjectIdRoute
-    }
-    '/notes/$projectId/$noteId': {
-      id: '/notes/$projectId/$noteId'
-      path: '/$noteId'
-      fullPath: '/notes/$projectId/$noteId'
-      preLoaderRoute: typeof NotesProjectIdNoteIdRouteImport
-      parentRoute: typeof NotesProjectIdRoute
-    }
-    '/_tasks/today/create': {
-      id: '/_tasks/today/create'
-      path: '/create'
-      fullPath: '/today/create'
-      preLoaderRoute: typeof TasksTodayCreateRouteImport
-      parentRoute: typeof TasksTodayRoute
     }
     '/_tasks/today/$taskId': {
       id: '/_tasks/today/$taskId'
@@ -474,26 +341,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksTodayTaskIdRouteImport
       parentRoute: typeof TasksTodayRoute
     }
-    '/_tasks/later/create': {
-      id: '/_tasks/later/create'
-      path: '/create'
-      fullPath: '/later/create'
-      preLoaderRoute: typeof TasksLaterCreateRouteImport
-      parentRoute: typeof TasksLaterRoute
-    }
     '/_tasks/later/$taskId': {
       id: '/_tasks/later/$taskId'
       path: '/$taskId'
       fullPath: '/later/$taskId'
       preLoaderRoute: typeof TasksLaterTaskIdRouteImport
       parentRoute: typeof TasksLaterRoute
-    }
-    '/_tasks/backlog/create': {
-      id: '/_tasks/backlog/create'
-      path: '/create'
-      fullPath: '/backlog/create'
-      preLoaderRoute: typeof TasksBacklogCreateRouteImport
-      parentRoute: typeof TasksBacklogRoute
     }
     '/_tasks/backlog/$taskId': {
       id: '/_tasks/backlog/$taskId'
@@ -502,82 +355,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksBacklogTaskIdRouteImport
       parentRoute: typeof TasksBacklogRoute
     }
+    '/_notes/starred/$noteId': {
+      id: '/_notes/starred/$noteId'
+      path: '/$noteId'
+      fullPath: '/starred/$noteId'
+      preLoaderRoute: typeof NotesStarredNoteIdRouteImport
+      parentRoute: typeof NotesStarredRoute
+    }
+    '/_notes/projects/$projectId': {
+      id: '/_notes/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof NotesProjectsProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_notes/inbox/$noteId': {
+      id: '/_notes/inbox/$noteId'
+      path: '/$noteId'
+      fullPath: '/inbox/$noteId'
+      preLoaderRoute: typeof NotesInboxNoteIdRouteImport
+      parentRoute: typeof NotesInboxRoute
+    }
+    '/_notes/projects/$projectId/': {
+      id: '/_notes/projects/$projectId/'
+      path: '/'
+      fullPath: '/projects/$projectId/'
+      preLoaderRoute: typeof NotesProjectsProjectIdIndexRouteImport
+      parentRoute: typeof NotesProjectsProjectIdRoute
+    }
+    '/_notes/projects/$projectId/$noteId': {
+      id: '/_notes/projects/$projectId/$noteId'
+      path: '/$noteId'
+      fullPath: '/projects/$projectId/$noteId'
+      preLoaderRoute: typeof NotesProjectsProjectIdNoteIdRouteImport
+      parentRoute: typeof NotesProjectsProjectIdRoute
+    }
   }
 }
 
-interface TasksBacklogRouteChildren {
-  TasksBacklogTaskIdRoute: typeof TasksBacklogTaskIdRoute
-  TasksBacklogCreateRoute: typeof TasksBacklogCreateRoute
-  TasksBacklogIndexRoute: typeof TasksBacklogIndexRoute
-}
-
-const TasksBacklogRouteChildren: TasksBacklogRouteChildren = {
-  TasksBacklogTaskIdRoute: TasksBacklogTaskIdRoute,
-  TasksBacklogCreateRoute: TasksBacklogCreateRoute,
-  TasksBacklogIndexRoute: TasksBacklogIndexRoute,
-}
-
-const TasksBacklogRouteWithChildren = TasksBacklogRoute._addFileChildren(
-  TasksBacklogRouteChildren,
-)
-
-interface TasksLaterRouteChildren {
-  TasksLaterTaskIdRoute: typeof TasksLaterTaskIdRoute
-  TasksLaterCreateRoute: typeof TasksLaterCreateRoute
-  TasksLaterIndexRoute: typeof TasksLaterIndexRoute
-}
-
-const TasksLaterRouteChildren: TasksLaterRouteChildren = {
-  TasksLaterTaskIdRoute: TasksLaterTaskIdRoute,
-  TasksLaterCreateRoute: TasksLaterCreateRoute,
-  TasksLaterIndexRoute: TasksLaterIndexRoute,
-}
-
-const TasksLaterRouteWithChildren = TasksLaterRoute._addFileChildren(
-  TasksLaterRouteChildren,
-)
-
-interface TasksTodayRouteChildren {
-  TasksTodayTaskIdRoute: typeof TasksTodayTaskIdRoute
-  TasksTodayCreateRoute: typeof TasksTodayCreateRoute
-  TasksTodayIndexRoute: typeof TasksTodayIndexRoute
-}
-
-const TasksTodayRouteChildren: TasksTodayRouteChildren = {
-  TasksTodayTaskIdRoute: TasksTodayTaskIdRoute,
-  TasksTodayCreateRoute: TasksTodayCreateRoute,
-  TasksTodayIndexRoute: TasksTodayIndexRoute,
-}
-
-const TasksTodayRouteWithChildren = TasksTodayRoute._addFileChildren(
-  TasksTodayRouteChildren,
-)
-
-interface NotesProjectIdRouteChildren {
-  NotesProjectIdNoteIdRoute: typeof NotesProjectIdNoteIdRoute
-  NotesProjectIdCreateRoute: typeof NotesProjectIdCreateRoute
-  NotesProjectIdIndexRoute: typeof NotesProjectIdIndexRoute
-}
-
-const NotesProjectIdRouteChildren: NotesProjectIdRouteChildren = {
-  NotesProjectIdNoteIdRoute: NotesProjectIdNoteIdRoute,
-  NotesProjectIdCreateRoute: NotesProjectIdCreateRoute,
-  NotesProjectIdIndexRoute: NotesProjectIdIndexRoute,
-}
-
-const NotesProjectIdRouteWithChildren = NotesProjectIdRoute._addFileChildren(
-  NotesProjectIdRouteChildren,
-)
-
 interface NotesInboxRouteChildren {
   NotesInboxNoteIdRoute: typeof NotesInboxNoteIdRoute
-  NotesInboxCreateRoute: typeof NotesInboxCreateRoute
   NotesInboxIndexRoute: typeof NotesInboxIndexRoute
 }
 
 const NotesInboxRouteChildren: NotesInboxRouteChildren = {
   NotesInboxNoteIdRoute: NotesInboxNoteIdRoute,
-  NotesInboxCreateRoute: NotesInboxCreateRoute,
   NotesInboxIndexRoute: NotesInboxIndexRoute,
 }
 
@@ -587,13 +409,11 @@ const NotesInboxRouteWithChildren = NotesInboxRoute._addFileChildren(
 
 interface NotesStarredRouteChildren {
   NotesStarredNoteIdRoute: typeof NotesStarredNoteIdRoute
-  NotesStarredCreateRoute: typeof NotesStarredCreateRoute
   NotesStarredIndexRoute: typeof NotesStarredIndexRoute
 }
 
 const NotesStarredRouteChildren: NotesStarredRouteChildren = {
   NotesStarredNoteIdRoute: NotesStarredNoteIdRoute,
-  NotesStarredCreateRoute: NotesStarredCreateRoute,
   NotesStarredIndexRoute: NotesStarredIndexRoute,
 }
 
@@ -601,14 +421,72 @@ const NotesStarredRouteWithChildren = NotesStarredRoute._addFileChildren(
   NotesStarredRouteChildren,
 )
 
+interface TasksBacklogRouteChildren {
+  TasksBacklogTaskIdRoute: typeof TasksBacklogTaskIdRoute
+  TasksBacklogIndexRoute: typeof TasksBacklogIndexRoute
+}
+
+const TasksBacklogRouteChildren: TasksBacklogRouteChildren = {
+  TasksBacklogTaskIdRoute: TasksBacklogTaskIdRoute,
+  TasksBacklogIndexRoute: TasksBacklogIndexRoute,
+}
+
+const TasksBacklogRouteWithChildren = TasksBacklogRoute._addFileChildren(
+  TasksBacklogRouteChildren,
+)
+
+interface TasksLaterRouteChildren {
+  TasksLaterTaskIdRoute: typeof TasksLaterTaskIdRoute
+  TasksLaterIndexRoute: typeof TasksLaterIndexRoute
+}
+
+const TasksLaterRouteChildren: TasksLaterRouteChildren = {
+  TasksLaterTaskIdRoute: TasksLaterTaskIdRoute,
+  TasksLaterIndexRoute: TasksLaterIndexRoute,
+}
+
+const TasksLaterRouteWithChildren = TasksLaterRoute._addFileChildren(
+  TasksLaterRouteChildren,
+)
+
+interface TasksTodayRouteChildren {
+  TasksTodayTaskIdRoute: typeof TasksTodayTaskIdRoute
+  TasksTodayIndexRoute: typeof TasksTodayIndexRoute
+}
+
+const TasksTodayRouteChildren: TasksTodayRouteChildren = {
+  TasksTodayTaskIdRoute: TasksTodayTaskIdRoute,
+  TasksTodayIndexRoute: TasksTodayIndexRoute,
+}
+
+const TasksTodayRouteWithChildren = TasksTodayRoute._addFileChildren(
+  TasksTodayRouteChildren,
+)
+
+interface NotesProjectsProjectIdRouteChildren {
+  NotesProjectsProjectIdNoteIdRoute: typeof NotesProjectsProjectIdNoteIdRoute
+  NotesProjectsProjectIdIndexRoute: typeof NotesProjectsProjectIdIndexRoute
+}
+
+const NotesProjectsProjectIdRouteChildren: NotesProjectsProjectIdRouteChildren =
+  {
+    NotesProjectsProjectIdNoteIdRoute: NotesProjectsProjectIdNoteIdRoute,
+    NotesProjectsProjectIdIndexRoute: NotesProjectsProjectIdIndexRoute,
+  }
+
+const NotesProjectsProjectIdRouteWithChildren =
+  NotesProjectsProjectIdRoute._addFileChildren(
+    NotesProjectsProjectIdRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  NotesInboxRoute: NotesInboxRouteWithChildren,
+  NotesStarredRoute: NotesStarredRouteWithChildren,
   TasksBacklogRoute: TasksBacklogRouteWithChildren,
   TasksLaterRoute: TasksLaterRouteWithChildren,
   TasksTodayRoute: TasksTodayRouteWithChildren,
-  NotesProjectIdRoute: NotesProjectIdRouteWithChildren,
-  NotesInboxRoute: NotesInboxRouteWithChildren,
-  NotesStarredRoute: NotesStarredRouteWithChildren,
+  NotesProjectsProjectIdRoute: NotesProjectsProjectIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

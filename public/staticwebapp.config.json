@@ -1,5 +1,9 @@
 {
-  "routes": [{ "route": "/.auth/login", "statusCode": 404 }],
+  "routes": [
+    { "route": "/.auth/login", "statusCode": 404 },
+    { "route": "/sw.js", "headers": { "Cache-Control": "no-cache" } },
+    { "route": "/manifest.webmanifest", "headers": { "Cache-Control": "no-cache" } }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html"
   }

@@ -1,8 +1,34 @@
 import { defineConfig } from "vite-plus";
+import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
-import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
+import type { Plugin } from "vite-plus";
 import { fileURLToPath } from "node:url";
+
+/**
+ * vite-plugin-pwa injects manifest/icon/theme-color links into every HTML entry. The
+ * MSAL bridge page (redirect.html) must stay inert, so strip those tags from it after
+ * injection. The SW is never registered there (registerSW lives only in src/main.tsx).
+ */
+function stripPwaTagsFromRedirect(): Plugin {
+  const pwaTag =
+    /\s*<(?:link|meta)\b[^>]*(?:rel="(?:manifest|icon|apple-touch-icon)"|name="theme-color")[^>]*>/g;
+  return {
+    name: "strip-pwa-tags-from-redirect",
+    // Run after vite-plugin-pwa has injected its head links into the emitted HTML.
+    generateBundle: {
+      order: "post",
+      handler(_, bundle) {
+        for (const file of Object.values(bundle)) {
+          if (file.type === "asset" && file.fileName.endsWith("redirect.html")) {
+            file.source = String(file.source).replace(pwaTag, "");
+          }
+        }
+      },
+    },
+  };
+}
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -20,7 +46,7 @@ export default defineConfig({
     env: {
       builtin: true,
     },
-    ignorePatterns: ["dist", "src/routeTree.gen.ts"],
+    ignorePatterns: [".claude", ".tanstack", "dist", "src/routeTree.gen.ts"],
     overrides: [
       {
         files: ["**/*.{ts,tsx}"],
@@ -90,6 +116,7 @@ export default defineConfig({
           "no-array-constructor": "error",
           "no-unused-expressions": "error",
           "typescript/ban-ts-comment": "error",
+          "typescript/no-deprecated": "error",
           "typescript/no-duplicate-enum-values": "error",
           "typescript/no-empty-object-type": "error",
           "typescript/no-explicit-any": "error",
@@ -120,7 +147,7 @@ export default defineConfig({
         },
       },
       {
-        files: ["src/routes/**/*.tsx"],
+        files: ["src/components/ui/**/*.tsx", "src/routes/**/*.tsx"],
         rules: {
           "react/only-export-components": "off",
         },
@@ -140,14 +167,6 @@ export default defineConfig({
       "vite-plus/prefer-vite-plus-imports": "error",
     },
   },
-  test: {
-    include: ["src/**/*.test.{ts,tsx}"],
-  },
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
   build: {
     rolldownOptions: {
       input: {
@@ -157,11 +176,42 @@ export default defineConfig({
     },
   },
   plugins: [
-    tanstackRouter({
-      target: "react",
-      autoCodeSplitting: true,
-    }),
+    tanstackRouter({ target: "react", autoCodeSplitting: true }),
     react(),
     tailwindcss(),
+    VitePWA({
+      registerType: "autoUpdate",
+      // Register the SW manually from src/main.tsx (loaded only by index.html) so the
+      // second HTML entry (redirect.html, the MSAL bridge) never registers the SW.
+      injectRegister: false,
+      // Generate icons from assets/notebook.svg via pwa-assets.config.ts and inject the
+      // icon <link>s + theme-color, and populate manifest.icons.
+      pwaAssets: { config: true, injectThemeColor: true },
+      filename: "sw.js",
+      manifest: {
+        name: "Notes",
+        short_name: "Notes",
+        description: "Personal notes & tasks",
+        id: "/",
+        start_url: "/",
+        display: "standalone",
+        theme_color: "#ffffff",
+        background_color: "#ffffff",
+      },
+      workbox: {
+        // Default globs omit fonts; add them so the bundled Inter woff2 files are precached
+        // (otherwise text falls back to a system font when offline).
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
+        navigateFallback: "/index.html",
+        // Keep the SW clear of the MSAL redirect bridge so it never serves index.html there.
+        navigateFallbackDenylist: [/redirect\.html$/],
+      },
+    }),
+    stripPwaTagsFromRedirect(),
   ],
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
 });

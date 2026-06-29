@@ -1,33 +1,46 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { PublicClientApplication } from "@azure/msal-browser";
-import AuthProvider from "@/lib/auth/AuthProvider.tsx";
-import { CloudSyncEngine } from "@/features/cloud-sync/cloud-sync-engine.ts";
-import CloudSyncProvider from "@/features/cloud-sync/CloudSyncProvider.tsx";
+import { registerSW } from "virtual:pwa-register";
+import { createStandardPublicClientApplication } from "@azure/msal-browser";
+import { GraphClient } from "@/lib/graph/graph-client";
+import { Database } from "@/data/database";
+import DatabaseProvider from "@/data/database-provider";
+import { Session } from "@/features/auth/session";
+import SessionProvider from "@/features/auth/session-provider";
+import { Sync } from "@/features/sync/sync";
+import SyncProvider from "@/features/sync/sync-provider";
 import "./index.css";
-import App from "./App.tsx";
+import App from "./app";
+
+// Register the service worker for PWA installability + offline app-shell caching.
+registerSW({ immediate: true });
 
 const graphScopes = ["Tasks.ReadWrite", "Files.ReadWrite.AppFolder"];
 
-const msal = new PublicClientApplication({
+const msal = await createStandardPublicClientApplication({
   auth: {
     clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID,
-    authority: "https://login.microsoftonline.com/consumers",
-    redirectUri: `${window.location.origin}/redirect.html`,
+    authority: import.meta.env.VITE_MICROSOFT_AUTHORITY,
+    redirectUri: import.meta.env.VITE_MICROSOFT_REDIRECT_URI,
   },
   cache: {
     cacheLocation: "localStorage",
   },
 });
 
-const syncEngine = new CloudSyncEngine(msal, graphScopes);
+const db = new Database();
+const session = new Session(msal, graphScopes);
+const graph = new GraphClient(session);
+const sync = new Sync(db, graph);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AuthProvider msal={msal} scopes={graphScopes}>
-      <CloudSyncProvider syncEngine={syncEngine}>
-        <App />
-      </CloudSyncProvider>
-    </AuthProvider>
+    <DatabaseProvider db={db}>
+      <SessionProvider session={session}>
+        <SyncProvider sync={sync}>
+          <App />
+        </SyncProvider>
+      </SessionProvider>
+    </DatabaseProvider>
   </StrictMode>,
 );

@@ -43,9 +43,9 @@ jobs:
           VITE_MICROSOFT_CLIENT_ID: ${{ secrets.VITE_MICROSOFT_CLIENT_ID }}
 
       - name: Install OIDC Client from Core Package
-        run: pnpm add @actions/core@1.6.0 @actions/http-client
+        run: pnpm add @actions/core@1.11.0 @actions/http-client
       - name: Get Id Token
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         id: idtoken
         with:
           script: |
