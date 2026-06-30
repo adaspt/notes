@@ -4,13 +4,14 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { Archive, Clock, Folder, Inbox, ListChecks, Star } from "lucide-react";
+import { Archive, Clock, Folder, Inbox, ListChecks, Notebook, Star } from "lucide-react";
 import AuthSection from "../auth/auth-section";
 import { useProjects } from "../notes/data/use-projects";
 import SyncControls from "../sync/sync-controls";
@@ -25,9 +26,23 @@ function AppSidebar() {
 
   return (
     <Sidebar>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Notebook />
+              </div>
+              <div className="flex flex-col gap-0.5 leading-none">
+                <span className="font-medium">Notes</span>
+                <span className="">v1.0.0</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Tasks</SidebarGroupLabel>
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
