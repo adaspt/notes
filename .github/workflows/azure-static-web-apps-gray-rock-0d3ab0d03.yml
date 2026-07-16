@@ -41,6 +41,7 @@ jobs:
       - name: Build
         run: pnpm run build
         env:
+          VITE_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.VITE_APPINSIGHTS_CONNECTION_STRING }}
           VITE_MICROSOFT_CLIENT_ID: ${{ secrets.VITE_MICROSOFT_CLIENT_ID }}
           VITE_MICROSOFT_AUTHORITY: ${{ secrets.VITE_MICROSOFT_AUTHORITY }}
           VITE_MICROSOFT_REDIRECT_URI: ${{ secrets.VITE_MICROSOFT_REDIRECT_URI }}
