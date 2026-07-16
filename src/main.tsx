@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 import { createStandardPublicClientApplication } from "@azure/msal-browser";
+import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { GraphClient } from "@/lib/graph/graph-client";
 import { Database } from "@/data/database";
 import DatabaseProvider from "@/data/database-provider";
@@ -14,6 +15,15 @@ import App from "./app";
 
 // Register the service worker for PWA installability + offline app-shell caching.
 registerSW({ immediate: true });
+
+const appInsights = new ApplicationInsights({
+  config: {
+    connectionString: import.meta.env.VITE_APPINSIGHTS_CONNECTION_STRING,
+    enableAutoRouteTracking: true,
+    enableUnhandledPromiseRejectionTracking: true,
+  },
+});
+appInsights.loadAppInsights();
 
 const graphScopes = ["Tasks.ReadWrite", "Files.ReadWrite.AppFolder"];
 
