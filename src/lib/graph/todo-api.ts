@@ -195,6 +195,17 @@ export async function createTask(
   );
 }
 
+export async function getTask(
+  graph: GraphClient,
+  listId: string,
+  remoteId: string,
+): Promise<TodoTask> {
+  return await graph.get(
+    `/me/todo/lists/${encodeURIComponent(listId)}/tasks/${encodeURIComponent(remoteId)}`,
+    graphTodoTaskResponseSchema,
+  );
+}
+
 export async function updateTask(
   graph: GraphClient,
   listId: string,
@@ -204,7 +215,10 @@ export async function updateTask(
   return await graph.patch(
     `/me/todo/lists/${encodeURIComponent(listId)}/tasks/${encodeURIComponent(remoteId)}`,
     graphTodoTaskResponseSchema,
-    toGraphTask(task),
+    // Microsoft To Do currently rejects recurrence.range.startDate when recurrence is
+    // included in a PATCH, even though the documented Edm.Date wire format is used.
+    // TaskSync checks the current recurrence first and replaces the task when it changed.
+    toGraphTask(task, false),
   );
 }
 
@@ -226,18 +240,18 @@ interface GraphTodoTaskInput {
   dueDateTime: { dateTime: string; timeZone: string } | null;
   reminderDateTime: { dateTime: string; timeZone: string } | null;
   isReminderOn: boolean;
-  recurrence: Recurrence | null;
+  recurrence?: Recurrence | null;
   importance: TodoPriority;
   status: TodoStatus;
 }
 
-const toGraphTask = (task: TaskRecord): GraphTodoTaskInput => ({
+const toGraphTask = (task: TaskRecord, includeRecurrence = true): GraphTodoTaskInput => ({
   title: task.title,
   body: { content: task.body, contentType: "text" },
   dueDateTime: toGraphDate(task.dueDate),
   reminderDateTime: toGraphDateTime(task.reminder),
   isReminderOn: task.reminder !== null,
-  recurrence: task.recurrence,
+  ...(includeRecurrence ? { recurrence: task.recurrence } : {}),
   importance: task.priority,
   status: task.status,
 });

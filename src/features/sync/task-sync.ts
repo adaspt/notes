@@ -1,5 +1,5 @@
 import type { Database } from "@/data/database";
-import type { SyncState, TaskRecord } from "@/data/schemas";
+import type { Recurrence, RecurrencePattern, SyncState, TaskRecord } from "@/data/schemas";
 import { GraphApiError, type GraphClient } from "@/lib/graph/graph-client";
 import * as todo from "@/lib/graph/todo-api";
 import type { TodoTask } from "@/lib/graph/todo-api";
@@ -145,11 +145,40 @@ export class TaskSync {
   }
 
   async #pushUpdate(state: TaskSyncState, snapshot: TaskRecord, remoteId: string) {
+    // Graph's To Do endpoint cannot PATCH recurrence ranges: it tries to deserialize the
+    // correctly formatted YYYY-MM-DD string as a different Edm.Date representation and
+    // returns invalidRequest. Check the remote value before applying any changes so a
+    // failed replacement cannot leave the old task partially updated.
+    const remote = await todo.getTask(this.#graph, state.listId, remoteId);
+    if (!recurrencesMatch(remote.recurrence, snapshot.recurrence)) {
+      await this.#replaceForRecurrenceChange(state, snapshot, remoteId);
+      return;
+    }
+
+    // Recurrence is unchanged, so it is safe to omit it from this PATCH.
     const updated = await todo.updateTask(this.#graph, state.listId, remoteId, snapshot);
     const current = await this.#db.tasks.get(snapshot.id);
 
     if (current && matchesSnapshot(current, snapshot)) {
       await this.#db.tasks.put(toLocalRecord(updated, snapshot.id));
+    }
+  }
+
+  async #replaceForRecurrenceChange(state: TaskSyncState, snapshot: TaskRecord, remoteId: string) {
+    const created = await todo.createTask(this.#graph, state.listId, snapshot);
+    await todo.deleteTask(this.#graph, state.listId, remoteId);
+
+    const current = await this.#db.tasks.get(snapshot.id);
+    if (!current) {
+      return;
+    }
+
+    if (matchesSnapshot(current, snapshot)) {
+      await this.#db.tasks.put(toLocalRecord(created, snapshot.id));
+    } else if (current.remoteId === remoteId) {
+      // Preserve edits made while the network requests were in flight. The next sync will
+      // apply them to the replacement rather than targeting the deleted Graph task.
+      await this.#db.tasks.put({ ...current, remoteId: created.id });
     }
   }
 }
@@ -174,6 +203,53 @@ const matchesSnapshot = (current: TaskRecord, snapshot: TaskRecord) =>
   current.deletedAt?.getTime() === snapshot.deletedAt?.getTime() &&
   current.syncStatus === snapshot.syncStatus &&
   current.remoteId === snapshot.remoteId;
+
+const recurrencesMatch = (left: Recurrence | null, right: Recurrence | null) => {
+  if (!left || !right) {
+    return left === right;
+  }
+
+  return (
+    patternsMatch(left.pattern, right.pattern) &&
+    left.range.type === right.range.type &&
+    left.range.startDate === right.range.startDate &&
+    (left.range.recurrenceTimeZone ?? "UTC") === (right.range.recurrenceTimeZone ?? "UTC") &&
+    (left.range.type !== "endDate" || left.range.endDate === right.range.endDate) &&
+    (left.range.type !== "numbered" ||
+      left.range.numberOfOccurrences === right.range.numberOfOccurrences)
+  );
+};
+
+const patternsMatch = (left: RecurrencePattern, right: RecurrencePattern) => {
+  if (left.type !== right.type || left.interval !== right.interval) {
+    return false;
+  }
+
+  switch (left.type) {
+    case "daily":
+      return true;
+    case "weekly":
+      return (
+        sameDays(left.daysOfWeek, right.daysOfWeek) &&
+        (left.firstDayOfWeek ?? "sunday") === (right.firstDayOfWeek ?? "sunday")
+      );
+    case "absoluteMonthly":
+      return left.dayOfMonth === right.dayOfMonth;
+    case "relativeMonthly":
+      return left.index === right.index && sameDays(left.daysOfWeek, right.daysOfWeek);
+    case "absoluteYearly":
+      return left.month === right.month && left.dayOfMonth === right.dayOfMonth;
+    case "relativeYearly":
+      return (
+        left.month === right.month &&
+        left.index === right.index &&
+        sameDays(left.daysOfWeek, right.daysOfWeek)
+      );
+  }
+};
+
+const sameDays = (left: string[] | undefined, right: string[] | undefined) =>
+  (left?.length ?? 0) === (right?.length ?? 0) && (left ?? []).every((day) => right?.includes(day));
 
 export const isExpiredDeltaError = (error: unknown) =>
   error instanceof GraphApiError &&
