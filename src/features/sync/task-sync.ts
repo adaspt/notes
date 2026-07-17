@@ -1,9 +1,11 @@
+import { SeverityLevel } from "@microsoft/applicationinsights-web";
 import type { Database } from "@/data/database";
 import type { Recurrence, RecurrencePattern, SyncState, TaskRecord } from "@/data/schemas";
 import { GraphApiError, type GraphClient } from "@/lib/graph/graph-client";
 import * as todo from "@/lib/graph/todo-api";
 import type { TodoTask } from "@/lib/graph/todo-api";
 import { createId } from "@/lib/id";
+import { appInsights } from "@/lib/telemetry";
 
 type TaskSyncState = SyncState & { scope: "tasks"; listId: string };
 
@@ -106,6 +108,15 @@ export class TaskSync {
           await this.#pushUpdate(state, snapshot, snapshot.remoteId);
         }
       } catch (error) {
+        appInsights.trackException({
+          exception: error instanceof Error ? error : new Error(String(error)),
+          severityLevel: SeverityLevel.Warning,
+          properties: {
+            scope: "tasks",
+            operation: snapshot.deletedAt ? "delete" : !snapshot.remoteId ? "create" : "update",
+            recordId: snapshot.id,
+          },
+        });
         // Isolate per-task failures so one bad task doesn't strand the rest of the queue;
         // it stays dirty and is retried on the next sync.
         console.error(`Failed to push task ${snapshot.id}`, error);

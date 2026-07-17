@@ -1,5 +1,7 @@
+import { SeverityLevel } from "@microsoft/applicationinsights-web";
 import type { Database } from "@/data/database";
 import { GraphApiError, GraphNetworkError, type GraphClient } from "@/lib/graph/graph-client";
+import { appInsights } from "@/lib/telemetry";
 import { AuthDeferredError } from "@/features/auth/session";
 import { NoteSync } from "./note-sync";
 import { TaskSync } from "./task-sync";
@@ -83,11 +85,20 @@ export class Sync {
     this.#isSyncing = true;
     this.#subscribers.forEach((fn) => fn(true));
 
+    let scope: "tasks" | "notes" = "tasks";
     try {
       await this.#taskSync.syncNow();
+      scope = "notes";
       await this.#noteSync.syncNow();
     } catch (error) {
-      if (!isTransientSyncError(error)) {
+      const transient = isTransientSyncError(error);
+      appInsights.trackException({
+        exception: error instanceof Error ? error : new Error(String(error)),
+        severityLevel: transient ? SeverityLevel.Warning : SeverityLevel.Error,
+        properties: { scope, transient },
+      });
+
+      if (!transient) {
         throw error;
       }
       // Connection dropped mid-sync, token deferred, throttled, or a transient Graph

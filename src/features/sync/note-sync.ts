@@ -1,3 +1,4 @@
+import { SeverityLevel } from "@microsoft/applicationinsights-web";
 import type { Database } from "@/data/database";
 import type { NoteRecord, SyncState } from "@/data/schemas";
 import { toFilename } from "@/features/notes/data/note-title";
@@ -5,6 +6,7 @@ import * as drive from "@/lib/graph/drive-api";
 import type { DriveItem } from "@/lib/graph/drive-api";
 import type { GraphClient } from "@/lib/graph/graph-client";
 import { createId } from "@/lib/id";
+import { appInsights } from "@/lib/telemetry";
 import { isExpiredDeltaError } from "./task-sync";
 
 type NoteSyncState = SyncState & { scope: "notes"; listId: string };
@@ -161,6 +163,15 @@ export class NoteSync {
           await this.#pushUpdate(snapshot, snapshot.remoteId);
         }
       } catch (error) {
+        appInsights.trackException({
+          exception: error instanceof Error ? error : new Error(String(error)),
+          severityLevel: SeverityLevel.Warning,
+          properties: {
+            scope: "notes",
+            operation: snapshot.deletedAt ? "delete" : !snapshot.remoteId ? "create" : "update",
+            recordId: snapshot.id,
+          },
+        });
         // Isolate per-note failures so one bad note doesn't strand the rest of the queue;
         // it stays dirty and is retried on the next sync.
         console.error(`Failed to push note ${snapshot.id}`, error);
